@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import {View,StyleSheet,ScrollView,Alert, Linking} from 'react-native';
+import {View,StyleSheet,Platform, Linking} from 'react-native';
 import { Button,Input,Text,Icon} from 'react-native-elements';
 import {useNavigation, useFocusEffect} from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

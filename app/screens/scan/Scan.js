@@ -1,12 +1,9 @@
 import React,{ useState, useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View , Alert, SafeAreaView, Platform, Image, Animated} from 'react-native';
 import { Camera } from 'expo-camera';
-import {Button} from 'react-native-elements';
 import { useFocusEffect, useNavigation} from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
 import Constants from 'expo-constants';
-import { StatusBar } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 
 const Scan = () => {
     const [hasPermission, setHasPermission] = useState(null);
@@ -18,8 +15,8 @@ const Scan = () => {
       useCallback(() => {
         (async ()=>{
           setScanned(false)
-          // const { status } = await BarCodeScanner.requestPermissionsAsync();
-          // setHasPermission(status === 'granted');
+          const { status } = await BarCodeScanner.requestPermissionsAsync();
+          setHasPermission(status === 'granted');
           const camaraStatus = await Camera.requestCameraPermissionsAsync();
           setHasPermission(camaraStatus.status === 'granted');
         })()

@@ -1,5 +1,5 @@
 import React, {useCallback,useState} from 'react'
-import { StyleSheet, Text, View, ActivityIndicator, TouchableOpacity, ScrollView} from 'react-native'
+import { StyleSheet, Text, View, ActivityIndicator, Platform} from 'react-native'
 import { Button ,Image,Icon} from "react-native-elements";
 import { useFocusEffect } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';

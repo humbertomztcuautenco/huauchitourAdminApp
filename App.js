@@ -80,7 +80,7 @@ const authContext = useMemo(() => ({
     },
     sigout: async () => {
       // setIsLogin(false);
-      // setUserToken(null);
+      setUserToken(null);
       await SecureStore.deleteItemAsync('userToken'); 
       dispatch({type:'LOGOUT'})
     },

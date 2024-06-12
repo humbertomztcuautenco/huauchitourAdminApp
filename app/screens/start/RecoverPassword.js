@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TouchableOpacity, Alert} from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Alert, Platform} from 'react-native'
 import { Button, Input, Text} from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Ionicons } from '@expo/vector-icons';

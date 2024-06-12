@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SafeAreaView, StyleSheet, Text, View, ScrollView, StatusBar, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, ScrollView, Platform, TouchableOpacity, Alert } from 'react-native';
 import { Button, Input, Icon } from 'react-native-elements';
 import { useNavigation, useFocusEffect} from '@react-navigation/native';
 import Api from '../../utils/Api';

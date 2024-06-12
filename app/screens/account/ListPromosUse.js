@@ -1,5 +1,5 @@
 import React,{useCallback,useState} from 'react'
-import { StyleSheet, Text, View, ScrollView,ActivityIndicator, TouchableOpacity} from 'react-native'
+import { StyleSheet, Text, View, Platform,ActivityIndicator, TouchableOpacity} from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import * as SecureStore from 'expo-secure-store';
 import moment from 'moment';
@@ -9,7 +9,6 @@ import Api from '../../utils/Api';
 import ListaPromosUsadas from '../../components/account/ListPromosUsadas';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
-import { StatusBar } from 'react-native';
 
 const ListPromosUse = () => {
     const navigation = useNavigation();

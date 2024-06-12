@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react'
-import { StyleSheet, View, ScrollView, Alert, ImageBackground, Linking, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, ScrollView, Alert, ImageBackground, Linking, TouchableOpacity, Platform } from 'react-native';
 import {ListItem,Icon,Text} from "react-native-elements";
 import {AuthContext} from '../../utils/context';
 import Constants from 'expo-constants';
