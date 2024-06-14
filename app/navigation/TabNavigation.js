@@ -9,7 +9,7 @@ import ScanStack from './ScanStack';
 
 const Tab = createBottomTabNavigator();
 
-export default function Navigation() {
+export default function iNavigation() {
   return (
     <NavigationContainer>
       <Tab.Navigator 

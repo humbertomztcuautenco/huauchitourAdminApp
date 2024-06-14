@@ -19,7 +19,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
     reducer: {
-        test: testSlice
+        test: persistedReducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
