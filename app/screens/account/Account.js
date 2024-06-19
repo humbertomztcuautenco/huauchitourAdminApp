@@ -7,22 +7,25 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import Modal from "react-native-modal";
 import Constants from 'expo-constants';
-
-import {AuthContext} from '../../utils/context';
+import { removeUser } from '../../features/auth/authSlice';
+import { useDispatch, useSelector} from 'react-redux';
 import Loader from '../../components/Loader';
 import Api from '../../utils/Api';
+import { clearEstab } from '../../features/selectEstab/selectEstabSlice';
 
 const Account = () => {
-    const  {sigout} = React.useContext(AuthContext);
+    const dispatch = useDispatch();
+    const { token } = useSelector((state) => state.auth);
+    const {selectedEstab} = useSelector((state) => state.selectEstab);
     const [infoUser, setInfoUser] = useState(null);
     const [numDescuentos, setNumDescuentos] = useState(null);
 
-    const [visible, setVisible] = React.useState(false);
+    const [visible, setVisible] = useState(false);
     const navigation = useNavigation();
 
     const[moment2, setMoment2] = useState("validation");
     const[verPassword, setVerPassword] = useState(false);
-    const [data, setData] = React.useState({
+    const [data, setData] = useState({
         user:"",
         password:""
     });
@@ -36,17 +39,16 @@ const Account = () => {
         useCallback(() => {
             ( async()=>{
                 let fecha = moment().format('yyyy-MM-DD')
-                let token = await SecureStore.getItemAsync('userToken');
                 let textJson = global.atob(token);
                 let infoUser = JSON.parse(textJson);
                 setInfoUser(infoUser.data);
-                let api = new Api(`promotion/count/${infoUser.data.idEstab}/${fecha}`,`GET`,null,token);
+                let api = new Api(`promotion/count/${selectedEstab.id}/${fecha}`,`GET`,null,token);
                 await api.call()
                 .then(res=>{
                     if (res.response) {
                         setNumDescuentos(res.result)
                     } else {
-                        res.result == 401 && sigout();
+                        res.result == 401 /* && sigout() */;
                     }
                 });
             })()
@@ -64,7 +66,9 @@ const Account = () => {
                 { 
                     text: "Aceptar", 
                     onPress: () => {
-                        sigout();
+                        dispatch(removeUser());
+                        dispatch(clearEstab())
+                        console.log("cerrar sesion")
                     } 
                 }
             ],
@@ -249,7 +253,7 @@ const Account = () => {
                                         containerStyle = {styles.btnContainer3}
                                         onPress={() => {
                                             abrirCerrar();
-                                            sigout();
+                                            dispatch(removeUser())
                                         }}
                                     />
                                 </View>

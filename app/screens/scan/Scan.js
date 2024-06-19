@@ -4,7 +4,8 @@ import { Camera } from 'expo-camera';
 import { useFocusEffect, useNavigation} from '@react-navigation/native';
 import { useIsFocused } from '@react-navigation/native';
 import Constants from 'expo-constants';
-
+import { BarCodeScanner } from 'expo-barcode-scanner';
+/* expo-camera PQ YA ESTA DEPRECADA LA OTRA*/
 const Scan = () => {
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
