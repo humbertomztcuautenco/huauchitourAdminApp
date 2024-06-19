@@ -10,16 +10,16 @@ import ListaPromosUsadas from '../../components/account/ListPromosUsadas';
 import Constants from 'expo-constants';
 import { Ionicons } from '@expo/vector-icons';
 
+import { useSelector } from 'react-redux';
 const ListPromosUse = () => {
+ const {token} = useSelector(state => state.auth);
     const navigation = useNavigation();
-    const {sigout} = React.useContext(AuthContext);
     const [listPromos, setListPromos] = useState(null)
 
     useFocusEffect(
         useCallback(() => {
             ( async()=>{
                 let fecha = moment().format('yyyy-MM-DD')
-                let token = await SecureStore.getItemAsync('userToken');
                 let textJson = global.atob(token);
                 let infoUser = JSON.parse(textJson);
                 // setInfoUser(infoUser.data);
@@ -29,7 +29,7 @@ const ListPromosUse = () => {
                     if (res.response) {
                         setListPromos(res.result)
                     } else {
-                        res.result == 401 && sigout();
+                        res.result == 401 /* && sigout() */;
                     }
                 });
             })()

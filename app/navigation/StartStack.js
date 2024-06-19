@@ -11,47 +11,47 @@ import ChangePass from '../screens/start/ChangePass';
 
 const Stack = createNativeStackNavigator();
 
-const  StartStack = () => {
+const StartStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         {/* <Stack.Screen name="cuentaInicio" component={Cuenta} options={{title:"Cuenta"}} /> */}
-        <Stack.Screen 
-          name= "login" 
-          component={Login} 
+        <Stack.Screen
+          name="login"
+          component={Login}
           options={{
-            title:"",
-            headerStyle:{
-              backgroundColor:'#fff',
+            title: "",
+            headerStyle: {
+              backgroundColor: '#fff',
               elevation: 0,
               shadowOpacity: 0,
               borderBottomWidth: 0
             },
             headerShown: false
-          }} 
+          }}
         />
-         <Stack.Screen 
-          name= "listestabs" 
-          component={ListEstabs} 
+        <Stack.Screen
+          name="listestabs"
+          component={ListEstabs}
           options={{
-            title:"",
-            headerStyle:{
-              backgroundColor:'#fff',
+            title: "",
+            headerStyle: {
+              backgroundColor: '#fff',
               elevation: 0,
               shadowOpacity: 0,
               borderBottomWidth: 0
             },
             headerShown: false,
             animation: 'slide_from_right'
-          }} 
+          }}
         />
-        <Stack.Screen 
-          name= "recoverpassword" 
-          component={RecoverPassword} 
+        <Stack.Screen
+          name="recoverpassword"
+          component={RecoverPassword}
           options={{
-            title:"",
-            headerStyle:{
-              backgroundColor:'#fff',
+            title: "",
+            headerStyle: {
+              backgroundColor: '#fff',
               elevation: 0,
               shadowOpacity: 0,
               borderBottomWidth: 0
@@ -59,13 +59,13 @@ const  StartStack = () => {
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name= "writeCode" 
-          component={WriteCode} 
+        <Stack.Screen
+          name="writeCode"
+          component={WriteCode}
           options={{
-            title:"",
-            headerStyle:{
-              backgroundColor:'#fff',
+            title: "",
+            headerStyle: {
+              backgroundColor: '#fff',
               elevation: 0,
               shadowOpacity: 0,
               borderBottomWidth: 0
@@ -73,13 +73,13 @@ const  StartStack = () => {
             headerShown: false
           }}
         />
-        <Stack.Screen 
-          name= "changePass" 
-          component={ChangePass} 
+        <Stack.Screen
+          name="changePass"
+          component={ChangePass}
           options={{
-            title:"",
-            headerStyle:{
-              backgroundColor:'#fff',
+            title: "",
+            headerStyle: {
+              backgroundColor: '#fff',
               elevation: 0,
               shadowOpacity: 0,
               borderBottomWidth: 0

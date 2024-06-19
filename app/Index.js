@@ -1,131 +1,24 @@
-import React, { useEffect, useMemo } from 'react';
-/* *********************** */
-import { Provider } from 'react-redux';
-import { store, persistor } from './store';
-import { PersistGate } from 'redux-persist/integration/react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-/* *********************** */
-
-// solucionar warnig
-import { LogBox, View, ActivityIndicator, Text } from 'react-native';
-// navegacion
+import { LogBox, View, ActivityIndicator } from 'react-native';
 import TabNavigation from './navigation/TabNavigation';
 import StartStack from './navigation/StartStack';
-// context
-import { AuthContext } from './utils/context';
-// base 64 error
 import { encode, decode } from 'base-64';
-// LogBox.ignoreAllLogs(true);
+import { retrieveToken } from './features/auth/authSlice';
+
 LogBox.ignoreLogs(["Setting a timer"]);
-// storage
-import * as SecureStore from 'expo-secure-store';
 if (!global.btoa) global.btoa = encode;
 if (!global.atob) global.atob = decode;
 
 export default function Index() {
-const dispatchTest = useDispatch();
-const stateTest = useSelector(state => state.auth);
-    const initialLoginState = {
-        isLogin: true,
-        userToken: null,
-        userName: null
-    }
-    /*  */
-
-    const loginReducer = (prevState, action) => {
-        switch (action.type) {
-            // RECUPERAR TOKEN SI YA ESTA LOGUEADO
-            case "RETRIVE_TOKEN":
-                return (
-                    {
-                        ...prevState,
-                        userToken: action.token,
-                        isLogin: false,
-                    }
-                )
-                break;
-            case "LOGIN":
-                return (
-                    {
-                        ...prevState,
-                        userToken: action.token,
-                        userName: action.id,
-                        isLogin: false,
-                    }
-                )
-                break;
-            case "LOGOUT":
-                return (
-                    {
-                        ...prevState,
-                        userToken: null,
-                        userName: null,
-                        isLogin: false,
-                    }
-                )
-                break;
-            case "REGISTER":
-                return (
-                    {
-                        ...prevState,
-                        userToken: action.token,
-                        userName: action.id,
-                        isLogin: false,
-                    }
-                )
-                break;
-        }
-    }
-
-    const [loginState, dispatch] = React.useReducer(loginReducer, initialLoginState);
-
-    const authContext = useMemo(() => ({
-        sigin: async (userToken, user) => {
-            await SecureStore.setItemAsync('userToken', userToken);
-            dispatch({ type: 'LOGIN', id: user, token: userToken })
-        },
-        sigout: async () => {
-            // setIsLogin(false);
-            setUserToken(null);
-            await SecureStore.deleteItemAsync('userToken');
-            dispatch({ type: 'LOGOUT' })
-        },
-        sigup: () => {
-            setIsLogin(false);
-            setUserToken('1280398109');
-        }
-    }));
-
+    const dispatch = useDispatch();
+    const { token } = useSelector((state) => state.auth);
+    const {selectedEstab} = useSelector((state) => state.selectEstab);
     useEffect(() => {
-        setTimeout(async () => {
-            // setIsLogin(false);
-            let userToken = await SecureStore.getItemAsync('userToken');
-            dispatch({ type: 'RETRIVE_TOKEN', token: userToken })
-        }, 1000);
-    }, [])
-
-    if (loginState.isLogin) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} >
-                <ActivityIndicator size={60} color="black" />
-            </View>
-        );
-    }
+        dispatch(retrieveToken());
+    }, [dispatch]);
 
     return (
-        /* USO DE useSelector y dispatch */
-        <AuthContext.Provider value={authContext}>
-            {loginState.userToken != null ? <TabNavigation /> : <StartStack />}
-        </AuthContext.Provider>
-
+        <>{token != null ? <TabNavigation /> : <StartStack />}</>
     );
-
-    /*     return (
-         < Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
-            { loginState.userToken != null ?  <TabNavigation/>  :  <StartStack/>}
-          </PersistGate>
-         </Provider>
-        ); */
-
 }
