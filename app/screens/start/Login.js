@@ -100,7 +100,7 @@ export default function Login({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.form}>
           <Image
-            source={require("../../../assets/htlogo.png")}
+            source={require("../../../assets/htLogo.png")}
             style={styles.imgForm}
           />
           <Text style={styles.welcomeText}>Bienvenido</Text>
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
   },
   imgForm: {
     width: "40%",
-    height: "18%",
+    height: "17.3%", //antes 18
   },
   welcomeText: {
     color: "white",
