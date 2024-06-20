@@ -54,7 +54,7 @@ const Home = ({ navigation }) => {
           });
           setNumDescuentos(res.result);
         } else {
-          res.result === 401 && sigout();
+          res.result === 401 
         }
       });
     setDia(dia === 'Hoy' ? 'Ayer' : 'Hoy');
@@ -65,7 +65,7 @@ const Home = ({ navigation }) => {
       if (Platform.OS === 'ios') {
         StatusBar.setBarStyle('dark-content');
       }
-
+      
       (async () => {
         let fecha = moment().format('YYYY-MM-DD');
         dispatch(retrieveToken());
@@ -88,7 +88,7 @@ const Home = ({ navigation }) => {
                 });
                 setNumDescuentos(res.result);
               } else {
-                res.result === 401 && sigout();
+                res.result === 401 
               }
             });
         }
