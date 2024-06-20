@@ -9,6 +9,7 @@ import Constants from "expo-constants";
 import { useDispatch } from "react-redux";
 import { addUser, selectEstab } from "../../features/auth/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { selectEstablishment } from "../../features/selectEstab/selectEstabSlice";
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -61,7 +62,7 @@ export default function Login({ navigation }) {
             dispatch(
               addUser({
                 token: res.result.token,
-                user: res.result.id,
+                user: toString(res.result.id),
                 estabs: res.result.estabs,
                 id: res.result.id,
                 estabSelect: null,
@@ -72,9 +73,10 @@ export default function Login({ navigation }) {
             });
 
             if (res.result.estabs.length > 1) {
-              navigation.navigate("listestabs");
-            } else {
-              dispatch(selectEstab({ estabSelect: res.result.estabs[0] }));
+              navigation.navigate("home");
+            }
+            else {
+              dispatch(selectEstablishment({ selectedEstab: JSON.parse(res.result.estabs) }));
               navigation.navigate("home");
             }
           } else {
@@ -171,8 +173,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   imgForm: {
-    width: "40%",
-    height: "17.3%", //antes 18
+    width: "38%",
+    height: "17%", //antes 18
   },
   welcomeText: {
     color: "white",
