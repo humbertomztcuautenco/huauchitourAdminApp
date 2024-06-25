@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, Text, View, ActivityIndicator, ScrollView, StatusBar, Platform, TouchableOpacity, Alert } from 'react-native';
-import { Button, Image, ListItem, Icon } from "react-native-elements";
+import { StyleSheet, Text, View, ActivityIndicator, ScrollView, StatusBar, Platform, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native';
+import { Image, Button } from 'react-native-elements';
 import * as SecureStore from 'expo-secure-store';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -12,6 +12,7 @@ import Api from '../../utils/Api';
 import { selectEstablishment } from '../../features/selectEstab/selectEstabSlice';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/FontAwesome'; // Asegúrate de que la importación sea correcta
 
 moment.updateLocale('en', {
   months: [
@@ -124,93 +125,138 @@ const Home = ({ navigation }) => {
     console.log('Cierre de sesión');
   };
 
+  const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC']; // Colores añadidos aquí
+
   return (
-    selectedEstab === null ? (
-      <View style={styles.container}>
-        <TouchableOpacity style={{ margin: 15 }} onPress={() => navigation.navigate('login')}>
-          <Ionicons name="arrow-back" size={40} />
-        </TouchableOpacity>
-        <Text style={{ marginLeft: 15, marginRight: 15, marginBottom: 15, fontSize: 24 }}>
-          Selecciona un establecimiento:
-        </Text>
-        {estabs && estabs.length > 0 ? (
-          <ScrollView>
-            {estabs.map((estab) => (
-              <ListItem key={estab.id} bottomDivider onPress={() => selectEstab(estab.id, estab.nombre)}>
-                <Icon raised name='sign-in' type='font-awesome' />
-                <ListItem.Content>
-                  <ListItem.Title>{estab.nombre}</ListItem.Title>
-                </ListItem.Content>
-                <ListItem.Chevron />
-              </ListItem>
-            ))}
-          </ScrollView>
-        ) : (
-          <View style={styles.noEstablishments}>
-            <Text style={{ textAlign: 'center', marginHorizontal: 40, fontSize: 20 }}>
-              Aún no tienes asignado ningún establecimiento.
-            </Text>
+    <View style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        
+        <View style={styles.imgTopContainer}>
+          <ImageBackground source={require('../../../assets/topHome.jpg')} style={styles.imgTop}>
+            <Text style={styles.textImg}>Bienvenido!</Text>
+          </ImageBackground>
+        </View>
+
+        <View style={styles.body}>
+          <View style={styles.searchContainer}>
+            <View style={styles.inputSearch}>
+              <TextInput placeholder='Buscar...' placeholderTextColor={'white'}></TextInput>
+              <TouchableOpacity>
+                <Icon name='search' size={20} color='white'/>
+              </TouchableOpacity>
+            </View>
+
+            <Text style={{fontSize:28, fontWeight:'700',marginTop:10}}>Selecciona un establecimiento:</Text>
           </View>
-        )}
-      </View>
-    ) : !infoUser ? (
-      <Loader />
-    ) : !infoPantalla ? (
-      <Loader />
-    ) : (
-      <View style={{ height: '100%', backgroundColor: '#fff', paddingTop: Platform.OS === 'ios' ? Constants.statusBarHeight * 2 : Constants.statusBarHeight }}>
-        <View style={{ height: '25%', marginLeft: 15, marginRight: 15 }}>
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Tu negocio</Text>
-          <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{selectedEstab.name}</Text>
+
+          <View style={styles.cardContainer}>
+            {estabs && estabs.length > 0 ? (
+              estabs.map((estab, index) => (
+                <TouchableOpacity key={estab.id} style={[styles.card,{backgroundColor: colors[index % colors.length]}]} onPress={() => selectEstab(estab.id, estab.nombre)}>
+                  <Image source={require('../../../assets/backLogin.jpg')} style={styles.imgCard} />
+                  <Text style={{fontSize:15, fontWeight:'700'}}>{estab.nombre}</Text>
+                  <Icon name='search' size={10} color='black'/>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.noEstablishments}>
+                <Text style={{ textAlign: 'center', marginHorizontal: 40, fontSize: 20 }}>
+                  Aún no tienes asignado ningún establecimiento.
+                </Text>
+              </View>
+            )}
+          </View>
         </View>
-        <View style={styles.partMidel}>
-          <Text style={{ color: '#fff' }}>{infoPantalla.fecha}</Text>
-          <Text style={{ color: '#fff', fontSize: 17 }}>Descuentos de</Text>
-          <Text style={{ color: '#fff', fontSize: 30 }}>{infoPantalla.hoy}</Text>
-          <Text style={{ color: '#fff', fontSize: 75 }}>{numDescuentos ? numDescuentos : <ActivityIndicator size={27} color="#fff" />}</Text>
-          <Button onPress={() => buscarPromos()} containerStyle={styles.btnAyer} buttonStyle={{ backgroundColor: '#fff', width: 80 }} titleStyle={{ color: 'black' }} title={dia} />
-        </View>
-        <View style={{ flexDirection: 'row', height: '25%', marginLeft: 15, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
-          <Text style={{ fontSize: 16 }}>Te deseamos excelentes ventas hoy.</Text>
-          <Image
-            resizeMode="cover"
-            source={require("../../../assets/likeDraw.png")}
-            style={{ height: 80, width: 80 }}
-            PlaceholderContent={<ActivityIndicator />}
-            placeholderStyle={{ backgroundColor: '#fff' }}
-          />
-        </View>
-      </View>
-    )
+
+        {/* {selectedEstab && (
+          <View style={{ height: '100%', backgroundColor: '#fff', paddingTop: Platform.OS === 'ios' ? Constants.statusBarHeight * 2 : Constants.statusBarHeight }}>
+            <View style={{ height: '25%', marginLeft: 15, marginRight: 15 }}>
+              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Tu negocio</Text>
+              <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{selectedEstab.name}</Text>
+            </View>
+            <View style={styles.partMidel}>
+              <Text style={{ color: '#fff' }}>{infoPantalla?.fecha}</Text>
+              <Text style={{ color: '#fff', fontSize: 17 }}>Descuentos de</Text>
+              <Text style={{ color: '#fff', fontSize: 30 }}>{infoPantalla?.hoy}</Text>
+              <Text style={{ color: '#fff', fontSize: 75 }}>{numDescuentos ? numDescuentos : <ActivityIndicator size={27} color="#fff" />}</Text>
+              <Button onPress={() => buscarPromos()} containerStyle={styles.btnAyer} buttonStyle={{ backgroundColor: '#fff', width: 80 }} titleStyle={{ color: 'black' }} title={dia} />
+            </View>
+            <View style={{ flexDirection: 'row', height: '25%', marginLeft: 15, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 16 }}>Te deseamos excelentes ventas hoy.</Text>
+            </View>
+          </View>
+        )} */}
+      </ScrollView>
+    </View>
   );
 };
 
 export default Home;
 
 const styles = StyleSheet.create({
-  partMidel: {
-    height: '50%',
-    marginLeft: 15,
-    marginRight: 15,
-    backgroundColor: '#B728FF',
-    borderRadius: 20,
-    padding: 20,
-    alignItems: 'center',
-  },
-  btnAyer: {
-    position: "absolute",
-    bottom: 10,
-    left: 10,
-    borderRadius: 13
-  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    paddingTop: Platform.OS === 'ios' ? Constants.statusBarHeight : 0,
+    backgroundColor: '#f5f5f5',
   },
-  noEstablishments: {
+  scrollContainer: {
+    flexGrow: 1,
+  },
+  imgTopContainer: {
+    height: 200,
+  },
+  imgTop: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  textImg: {
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  body: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  searchContainer: {
+    marginVertical: 10,
+  },
+  inputSearch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  cardContainer: {
+    marginVertical: 20,
+  },
+  card: {
+    marginBottom: 10,
+    borderRadius: 10,
+    padding: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  imgCard: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
+  },
+  noEstablishments: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  partMidel: {
+    height: '50%',
+    backgroundColor: 'black',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  btnAyer: {
+    marginTop: 20,
   },
 });
