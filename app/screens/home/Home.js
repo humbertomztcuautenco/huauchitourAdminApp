@@ -12,7 +12,8 @@ import Api from '../../utils/Api';
 import { selectEstablishment } from '../../features/selectEstab/selectEstabSlice';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Asegúrate de que la importación sea correcta
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 moment.updateLocale('en', {
   months: [
@@ -125,7 +126,7 @@ const Home = ({ navigation }) => {
     console.log('Cierre de sesión');
   };
 
-  const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC']; // Colores añadidos aquí
+  const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
 
   return (
     <View style={styles.container}>
@@ -142,7 +143,7 @@ const Home = ({ navigation }) => {
             <View style={styles.inputSearch}>
               <TextInput placeholder='Buscar...' placeholderTextColor={'white'}></TextInput>
               <TouchableOpacity>
-                <Icon name='search' size={20} color='white'/>
+                <FontAwesome style={{top:3}} name='search' size={20} color='white'/>
               </TouchableOpacity>
             </View>
 
@@ -154,8 +155,10 @@ const Home = ({ navigation }) => {
               estabs.map((estab, index) => (
                 <TouchableOpacity key={estab.id} style={[styles.card,{backgroundColor: colors[index % colors.length]}]} onPress={() => selectEstab(estab.id, estab.nombre)}>
                   <Image source={require('../../../assets/backLogin.jpg')} style={styles.imgCard} />
-                  <Text style={{fontSize:15, fontWeight:'700'}}>{estab.nombre}</Text>
-                  <Icon name='search' size={10} color='black'/>
+                  <Text style={{fontSize:25, fontWeight:'700'}}>{estab.nombre}</Text>
+                  <View style={styles.iconContainer}>
+                    <MaterialCommunityIcons name='arrow-collapse-right' size={20} color='black' />
+                  </View>
                 </TouchableOpacity>
               ))
             ) : (
@@ -168,95 +171,86 @@ const Home = ({ navigation }) => {
           </View>
         </View>
 
-        {/* {selectedEstab && (
-          <View style={{ height: '100%', backgroundColor: '#fff', paddingTop: Platform.OS === 'ios' ? Constants.statusBarHeight * 2 : Constants.statusBarHeight }}>
-            <View style={{ height: '25%', marginLeft: 15, marginRight: 15 }}>
-              <Text style={{ fontSize: 16, fontWeight: 'bold' }}>Tu negocio</Text>
-              <Text style={{ fontSize: 40, fontWeight: 'bold' }}>{selectedEstab.name}</Text>
-            </View>
-            <View style={styles.partMidel}>
-              <Text style={{ color: '#fff' }}>{infoPantalla?.fecha}</Text>
-              <Text style={{ color: '#fff', fontSize: 17 }}>Descuentos de</Text>
-              <Text style={{ color: '#fff', fontSize: 30 }}>{infoPantalla?.hoy}</Text>
-              <Text style={{ color: '#fff', fontSize: 75 }}>{numDescuentos ? numDescuentos : <ActivityIndicator size={27} color="#fff" />}</Text>
-              <Button onPress={() => buscarPromos()} containerStyle={styles.btnAyer} buttonStyle={{ backgroundColor: '#fff', width: 80 }} titleStyle={{ color: 'black' }} title={dia} />
-            </View>
-            <View style={{ flexDirection: 'row', height: '25%', marginLeft: 15, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontSize: 16 }}>Te deseamos excelentes ventas hoy.</Text>
-            </View>
-          </View>
-        )} */}
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
+  container:{
+    flex:1,
   },
-  scrollContainer: {
-    flexGrow: 1,
+  imgTop:{
+    width:'100%',
+    height:250,
+    resizeMode:'cover',
+    justifyContent:'flex-end',
   },
-  imgTopContainer: {
-    height: 200,
+  imgTopContainer:{
+    width:'100%',
   },
-  imgTop: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  scrollContainer:{
+    flexGrow:1,
   },
-  textImg: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
+  textImg:{
+    color:'white',
+    fontSize:30,
+    fontWeight:'700',
+    paddingBottom:35,
+    paddingLeft:20,
   },
-  body: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+  body:{
+    backgroundColor:'white',
+    width:'100%',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    marginTop:-20
   },
-  searchContainer: {
-    marginVertical: 10,
-  },
-  inputSearch: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+  card:{
+    marginVertical:10,
+    flexDirection:'row',
+    alignItems:'center',
+    width:'100%',
+    borderRadius:30,
+    height:150,
+    paddingLeft:20,
   },
   cardContainer: {
-    marginVertical: 20,
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    paddingHorizontal: 20,
+    width:'100%'
   },
-  card: {
-    marginBottom: 10,
-    borderRadius: 10,
-    padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  inputSearch:{
+    width:'80%',
+    flexDirection:'row',
+    backgroundColor:'gray',
+    borderRadius:20,
+    padding:3,
+    paddingLeft:10,
+    paddingRight:10,
+    justifyContent:'space-between'
   },
-  imgCard: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+  searchContainer:{
+    width:'100%',
+    justifyContent:'center',
+    alignItems:'center',
+    marginVertical:15
   },
-  noEstablishments: {
-    alignItems: 'center',
-    justifyContent: 'center',
+  imgCard:{
+    width:70,
+    height:70,
+    marginRight:5,
+    borderRadius:50
   },
-  partMidel: {
-    height: '50%',
-    backgroundColor: 'black',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  btnAyer: {
-    marginTop: 20,
-  },
-});
+  iconContainer:{
+    position:'absolute',
+    right:10,
+    bottom:10,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    borderRadius:30,
+    padding:12
+  }
+})

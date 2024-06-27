@@ -56,5 +56,5 @@ const purgePersistedStore = () => {
         });
 };
 
-// purgePersistedStore(); 
+//purgePersistedStore(); 
 //clearAsyncStorage(); 

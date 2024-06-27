@@ -102,27 +102,37 @@ export default function Login({ navigation }) {
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.form}>
           <Image
-            source={require("../../../assets/htLogo.png")}
+            source={require("../../../assets/htlogo.png")}
             style={styles.imgForm}
           />
           <Text style={styles.welcomeText}>Bienvenido</Text>
-          <TextInput style={styles.input} placeholder="Correo" onChangeText={(value) => guardarValor('user', value)} />
-          <TextInput
+
+          <Input 
+          style={styles.input}
+          placeholder="Correo" 
+          errorMessage={errors.mail}
+          inputContainerStyle={{borderBottomWidth:0}} 
+          onChangeText={(value) => guardarValor('user', value)} 
+          />
+
+          <Input
             style={styles.input}
             placeholder="Contraseña"
-            secureTextEntry={!verPassword}
+            inputContainerStyle={{borderBottomWidth:0}}
+            //secureTextEntry={!verPassword}
+            errorMessage={errors.password}
             onChangeText={(value) => guardarValor('password', value)}
           />
           <View style={styles.textsContainer}>
             <Text style={styles.text}>Dudas o aclaraciones?</Text>
             <Text style={styles.text}>Contactanos:</Text>
-            <TouchableOpacity>
-              <Text style={styles.contactText} onPress={handlePress}>correo@correo.com</Text>
+            <TouchableOpacity onPress={handlePress}>
+              <Text style={styles.contactText} >correo@correo.com</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.forgotPasswordText} onPress={() => navegacion.navigate("recoverpassword")}>
-            ¿Olvidaste tu contraseña?
-          </Text>
+          <TouchableOpacity onPress={() => navegacion.navigate("recoverpassword")}>
+            <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.button} onPress={login}>
             <Text style={styles.buttonText}>Entrar</Text>
           </TouchableOpacity>
@@ -173,8 +183,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   imgForm: {
-    width: "38%",
-    height: "17%", //antes 18
+    width: "39%",
+    height: "18%",
   },
   welcomeText: {
     color: "white",
@@ -188,12 +198,11 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 6,
     paddingLeft: 15,
-    marginVertical: 10,
   },
   textsContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
     marginBottom: 50,
   },
   text: {
