@@ -68,7 +68,6 @@ const Account = () => {
                     onPress: () => {
                         dispatch(removeUser());
                         dispatch(clearEstab())
-                        console.log("cerrar sesion")
                     } 
                 }
             ],

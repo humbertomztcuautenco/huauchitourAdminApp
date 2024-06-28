@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Platform, Linking, ScrollView, Image, TextInput, TouchableOpacity, Modal } from "react-native";
-import { Button, Input, Text, Icon } from "react-native-elements";
+import { View, StyleSheet, Platform, Linking, ScrollView, Image, TouchableOpacity, Modal } from "react-native";
+import { Input, Text } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Api from "../../utils/Api";
 import Loader from "../../components/Loader";
 import Constants from "expo-constants";
 import { useDispatch } from "react-redux";
-import { addUser, selectEstab } from "../../features/auth/authSlice";
+import { addUser } from "../../features/auth/authSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { selectEstablishment } from "../../features/selectEstab/selectEstabSlice";
+
 
 export default function Login({ navigation }) {
   const dispatch = useDispatch();
@@ -57,8 +57,7 @@ export default function Login({ navigation }) {
       await api.call().then(async (res) => {
         setTimeout(async () => {
           if (res.response) {
-            setIsLoading(false);
-            console.log("Login successful:", res.result);
+            setIsLoading(false);;
             dispatch(
               addUser({
                 token: res.result.token,
@@ -69,16 +68,8 @@ export default function Login({ navigation }) {
               })
             ).then(async () => {
               const storedToken = await AsyncStorage.getItem("token");
-              console.log("Token stored in AsyncStorage:", storedToken);
             });
 
-            if (res.result.estabs.length > 1) {
-              navigation.navigate("home");
-            }
-            else {
-              dispatch(selectEstablishment({ selectedEstab: JSON.parse(res.result.estabs) }));
-              navigation.navigate("home");
-            }
           } else {
             setIsLoading(false);
             setErrors({ password: res.message });

@@ -37,7 +37,6 @@ export { persistor };
 const clearAsyncStorage = async () => {
     try {
         await AsyncStorage.clear();
-        console.log('AsyncStorage has been cleared.');
     } catch (e) {
         console.error('Error clearing AsyncStorage:', e);
     }
@@ -49,12 +48,11 @@ const clearAsyncStorage = async () => {
 const purgePersistedStore = () => {
     persistor.purge()
         .then(() => {
-            console.log('Persisted store has been purged.');
         })
         .catch((e) => {
             console.error('Error purging persisted store:', e);
         });
 };
 
-//purgePersistedStore(); 
-//clearAsyncStorage(); 
+// purgePersistedStore(); 
+// clearAsyncStorage(); 

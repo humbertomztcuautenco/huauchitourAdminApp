@@ -14,7 +14,7 @@ import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import { getSelectedEstabFromStorage } from '../../features/selectEstab/selectEstabSlice';
 moment.updateLocale('en', {
   months: [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
@@ -39,11 +39,13 @@ const Home = ({ navigation }) => {
       startdate.subtract(1, 'd');
     }
     let fecha = startdate.format('YYYY-MM-DD');
-    let token = await SecureStore.getItemAsync('token');
+    let token = await AsyncStorage.getItem('token');
     let textJson = global.atob(token);
+
     let infoUser = JSON.parse(textJson);
     infoUser.data.idEstab = selectedEstab.id;
     infoUser.data.NombreEstab = selectedEstab.name;
+
     setInfoUser(infoUser.data);
     let api = new Api(`promotion/count/${infoUser.data.idEstab}/${fecha}`, `GET`, null, token);
     await api.call()
@@ -56,29 +58,32 @@ const Home = ({ navigation }) => {
           });
           setNumDescuentos(res.result);
         } else {
-          res.result === 401 
+          res.result === 401
         }
       });
     setDia(dia === 'Hoy' ? 'Ayer' : 'Hoy');
   };
 
   useFocusEffect(
+
     useCallback(() => {
       if (Platform.OS === 'ios') {
         StatusBar.setBarStyle('dark-content');
       }
-      
+
       (async () => {
         let fecha = moment().format('YYYY-MM-DD');
         dispatch(retrieveToken());
         const storedSelectedEstab = await AsyncStorage.getItem('selectedEstab');
-        if (storedSelectedEstab) {
-          dispatch(selectEstablishment({ selectedEstab: JSON.parse(storedSelectedEstab) }));
-        }
+
         if (token) {
           let textJson = global.atob(token);
           let infoUser = JSON.parse(textJson);
+          infoUser.data.idEstab = selectedEstab.id;
+          infoUser.data.NombreEstab = selectedEstab.name
+
           setInfoUser(infoUser.data);
+
           let api = new Api(`promotion/count/${selectedEstab.id}/${fecha}`, `GET`, null, token);
           await api.call()
             .then(res => {
@@ -90,7 +95,7 @@ const Home = ({ navigation }) => {
                 });
                 setNumDescuentos(res.result);
               } else {
-                res.result === 401 
+                res.result === 401
               }
             });
         }
@@ -105,7 +110,6 @@ const Home = ({ navigation }) => {
       [
         {
           text: "Cancelar",
-          onPress: () => console.log("Cancelado"),
           style: "cancel"
         },
         {
@@ -120,18 +124,48 @@ const Home = ({ navigation }) => {
     );
   };
 
-  const sigout = () => {
-    // Función para manejar cierre de sesión
-    // Puedes implementar aquí tu lógica para manejar el cierre de sesión
-    console.log('Cierre de sesión');
-  };
-
   const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
-
+  if (selectedEstab) {
+    return (
+      !infoUser ? (
+        <Loader />
+      ) : (
+        !infoPantalla ? (
+          <Loader />
+        ) : (
+          <View style={{ height: '100%', backgroundColor: '#fff', paddingTop: Platform.OS == 'ios' ? Constants.statusBarHeight * 2 : Constants.statusBarHeight }} >
+            <View style={{ height: '25%', marginLeft: 15, marginRight: 15 }} >
+              <Text style={{ fontSize: 16, fontWeight: 'bold' }} allowFontScaling={false}>Tu negocio</Text>
+              <Text style={{ fontSize: 40, fontWeight: 'bold' }} allowFontScaling={false}>{infoUser.NombreEstab}</Text>
+            </View>
+            <View style={styles.partMidel}>
+              <Text style={{ color: '#fff' }} allowFontScaling={false}>{infoPantalla.fecha}</Text>
+              <Text style={{ color: '#fff', fontSize: 17 }} allowFontScaling={false}>Descuentos de</Text>
+              <Text style={{ color: '#fff', fontSize: 30 }} allowFontScaling={false}>{infoPantalla.hoy}</Text>
+              <Text style={{ color: '#fff', fontSize: 75 }}>{numDescuentos ? numDescuentos : <ActivityIndicator size={27} color="#fff" />}</Text>
+              <Button onPress={() => buscarPromos()} allowFontScaling={false} containerStyle={styles.btnAyer} buttonStyle={{ backgroundColor: '#fff', width: 80 }} titleStyle={{ color: 'black' }} title={dia} />
+            </View>
+            <View style={{ flexDirection: 'row', height: '25%', marginLeft: 15, marginRight: 15, alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 16 }} allowFontScaling={false}>Te deseamos excelentes ventas hoy.</Text>
+              <Image
+                resizeMode="cover"
+                source={
+                  require("../../../assets/likeDraw.png")
+                }
+                style={{ height: 80, width: 80 }}
+                PlaceholderContent={<ActivityIndicator />}
+                placeholderStyle={{ backgroundColor: '#fff' }}
+              />
+            </View>
+          </View>
+        )
+      )
+    )
+  }
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        
+
         <View style={styles.imgTopContainer}>
           <ImageBackground source={require('../../../assets/topHome.jpg')} style={styles.imgTop}>
             <Text style={styles.textImg}>Bienvenido!</Text>
@@ -143,19 +177,19 @@ const Home = ({ navigation }) => {
             <View style={styles.inputSearch}>
               <TextInput placeholder='Buscar...' placeholderTextColor={'white'}></TextInput>
               <TouchableOpacity>
-                <FontAwesome style={{top:3}} name='search' size={20} color='white'/>
+                <FontAwesome style={{ top: 3 }} name='search' size={20} color='white' />
               </TouchableOpacity>
             </View>
 
-            <Text style={{fontSize:28, fontWeight:'700',marginTop:10}}>Selecciona un establecimiento:</Text>
+            <Text style={{ fontSize: 28, fontWeight: '700', marginTop: 10 }}>Selecciona un establecimiento:</Text>
           </View>
 
           <View style={styles.cardContainer}>
             {estabs && estabs.length > 0 ? (
               estabs.map((estab, index) => (
-                <TouchableOpacity key={estab.id} style={[styles.card,{backgroundColor: colors[index % colors.length]}]} onPress={() => selectEstab(estab.id, estab.nombre)}>
+                <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length] }]} onPress={() => selectEstab(estab.id, estab.nombre)}>
                   <Image source={require('../../../assets/backLogin.jpg')} style={styles.imgCard} />
-                  <Text style={{fontSize:25, fontWeight:'700'}}>{estab.nombre}</Text>
+                  <Text style={{ fontSize: 25, fontWeight: '700' }}>{estab.nombre}</Text>
                   <View style={styles.iconContainer}>
                     <MaterialCommunityIcons name='arrow-collapse-right' size={20} color='black' />
                   </View>
@@ -179,78 +213,78 @@ const Home = ({ navigation }) => {
 export default Home
 
 const styles = StyleSheet.create({
-  container:{
-    flex:1,
+  container: {
+    flex: 1,
   },
-  imgTop:{
-    width:'100%',
-    height:250,
-    resizeMode:'cover',
-    justifyContent:'flex-end',
+  imgTop: {
+    width: '100%',
+    height: 250,
+    resizeMode: 'cover',
+    justifyContent: 'flex-end',
   },
-  imgTopContainer:{
-    width:'100%',
+  imgTopContainer: {
+    width: '100%',
   },
-  scrollContainer:{
-    flexGrow:1,
+  scrollContainer: {
+    flexGrow: 1,
   },
-  textImg:{
-    color:'white',
-    fontSize:30,
-    fontWeight:'700',
-    paddingBottom:35,
-    paddingLeft:20,
+  textImg: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: '700',
+    paddingBottom: 35,
+    paddingLeft: 20,
   },
-  body:{
-    backgroundColor:'white',
-    width:'100%',
+  body: {
+    backgroundColor: 'white',
+    width: '100%',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    marginTop:-20
+    marginTop: -20
   },
-  card:{
-    marginVertical:10,
-    flexDirection:'row',
-    alignItems:'center',
-    width:'100%',
-    borderRadius:30,
-    height:150,
-    paddingLeft:20,
+  card: {
+    marginVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    borderRadius: 30,
+    height: 150,
+    paddingLeft: 20,
   },
   cardContainer: {
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     paddingHorizontal: 20,
-    width:'100%'
+    width: '100%'
   },
-  inputSearch:{
-    width:'80%',
-    flexDirection:'row',
-    backgroundColor:'gray',
-    borderRadius:20,
-    padding:3,
-    paddingLeft:10,
-    paddingRight:10,
-    justifyContent:'space-between'
+  inputSearch: {
+    width: '80%',
+    flexDirection: 'row',
+    backgroundColor: 'gray',
+    borderRadius: 20,
+    padding: 3,
+    paddingLeft: 10,
+    paddingRight: 10,
+    justifyContent: 'space-between'
   },
-  searchContainer:{
-    width:'100%',
-    justifyContent:'center',
-    alignItems:'center',
-    marginVertical:15
+  searchContainer: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 15
   },
-  imgCard:{
-    width:70,
-    height:70,
-    marginRight:5,
-    borderRadius:50
+  imgCard: {
+    width: 70,
+    height: 70,
+    marginRight: 5,
+    borderRadius: 50
   },
-  iconContainer:{
-    position:'absolute',
-    right:10,
-    bottom:10,
+  iconContainer: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
     backgroundColor: 'rgba(255, 255, 255, 0.6)',
-    borderRadius:30,
-    padding:12
+    borderRadius: 30,
+    padding: 12
   }
 })

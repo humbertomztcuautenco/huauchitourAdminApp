@@ -28,7 +28,7 @@ const ScreeanListPromos = (props) => {
                 await api.call()
                 .then(res=>{
                     if (res.response) {
-                        // console.log(res.result);
+
                         setPromos(res.result)
                     } else {
                         res.result == 401 && sigout();
