@@ -35,7 +35,6 @@ export const addUser = createAsyncThunk(
                 ['estabs', JSON.stringify(estabs)],
 /*                 ['estabSelect', estabSelect],
  */            ]);
-            console.log('Data stored in AsyncStorage:', { token, user, estabs, estabSelect, id });
             return { token, user, estabs, estabSelect, id };
         } catch (error) {
             console.error('Error storing user data in AsyncStorage:', error);
@@ -49,7 +48,6 @@ export const removeUser = createAsyncThunk(
     async () => {
         try {
             await AsyncStorage.clear();
-            console.log('User data removed from AsyncStorage.');
             return null;
         } catch (error) {
             console.error('Error removing user data from AsyncStorage:', error);

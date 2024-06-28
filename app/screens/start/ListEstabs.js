@@ -25,7 +25,6 @@ const ListEstabs = (props) => {
       [
         {
           text: "Cancelar",
-          onPress: () => console.log("Cancelado"),
           style: "cancel"
         },
         {

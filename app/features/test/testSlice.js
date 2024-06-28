@@ -5,7 +5,6 @@ export const testSlice = createSlice({
     initialState: "Mensaje de prueba",
     reducers:{
         viewMessage : (state, payload) => {
-            console.log(state);
         }
     }
 })

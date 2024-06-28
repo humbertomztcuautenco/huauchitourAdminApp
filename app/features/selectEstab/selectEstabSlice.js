@@ -5,6 +5,22 @@ const initialState = {
     selectedEstab: null,
 };
 
+// Función auxiliar para obtener el establecimiento seleccionado desde AsyncStorage
+export const getSelectedEstabFromStorage = async () => {
+    try {
+        const jsonValue = await AsyncStorage.getItem('selectedEstab');
+
+        if (!jsonValue) {
+
+            return null;
+        } 
+        return jsonValue != null ? JSON.parse(jsonValue) : null;
+    } catch (error) {
+        console.error('Error retrieving data from AsyncStorage:', error);
+        return null;
+    }
+};
+
 export const selectEstablishment = createAsyncThunk(
     'selectEstab/select',
     async ({ selectedEstab }, { rejectWithValue }) => {
@@ -13,7 +29,7 @@ export const selectEstablishment = createAsyncThunk(
                 throw new Error('selectedEstab is undefined or null');
             }
             await AsyncStorage.setItem('selectedEstab', JSON.stringify(selectedEstab));
-            console.log('Data stored in AsyncStorage:', { selectedEstab });
+
             return selectedEstab;
         } catch (error) {
             console.error('Error storing user data in AsyncStorage:', error);
@@ -32,7 +48,7 @@ const selectEstabSlice = createSlice({
                 console.error('Selected establishment is undefined or null');
                 return;
             }
-            console.log('Selected establishment:', selectedEstab);
+
             state.selectedEstab = selectedEstab;
             AsyncStorage.setItem('selectedEstab', JSON.stringify(selectedEstab)).catch(error => {
                 console.error('Error storing user data in AsyncStorage:', error);
@@ -56,5 +72,17 @@ const selectEstabSlice = createSlice({
     }
 });
 
+// Selector para obtener el establecimiento seleccionado
+export const getSelectedEstab = (state) => state.selectEstab.selectedEstab;
+
+// Acciones exportadas
 export const { selectEstab, clearEstab } = selectEstabSlice.actions;
 export default selectEstabSlice.reducer;
+
+// Función para cargar el establecimiento seleccionado desde AsyncStorage
+export const loadSelectedEstabFromStorage = () => async (dispatch) => {
+    const selectedEstab = await getSelectedEstabFromStorage();
+    if (selectedEstab) {
+        dispatch(selectEstab(selectedEstab));
+    }
+};
