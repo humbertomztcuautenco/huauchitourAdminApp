@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { retrieveToken } from '../../features/auth/authSlice';
 import Loader from '../../components/Loader';
 import Api from '../../utils/Api';
-import { selectEstablishment } from '../../features/selectEstab/selectEstabSlice';
+import { selectEstablishment, deselectEstab } from '../../features/selectEstab/selectEstabSlice';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,6 +21,7 @@ moment.updateLocale('en', {
     "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ]
 });
+
 
 const Home = ({ navigation }) => {
   const [infoUser, setInfoUser] = useState(null);
@@ -124,6 +125,26 @@ const Home = ({ navigation }) => {
     );
   };
 
+  const returnEstab = () => {
+    Alert.alert(
+      "Deseleccionar establecimiento",
+      "¿Estás seguro de deseleccionar tu establecimiento actual?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel"
+        },
+        {
+          text: "Deseleccionar",
+          onPress: async () => {
+            dispatch(deselectEstab());
+            await AsyncStorage.removeItem('selectedEstab');
+          }
+        }
+      ]
+    );
+  }
+
   const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
   if (selectedEstab) {
     return (
@@ -135,6 +156,9 @@ const Home = ({ navigation }) => {
         ) : (
           <View style={{ height: '100%', backgroundColor: '#fff', paddingTop: Platform.OS == 'ios' ? Constants.statusBarHeight * 2 : Constants.statusBarHeight }} >
             <View style={{ height: '25%', marginLeft: 15, marginRight: 15 }} >
+              <TouchableOpacity onPress={returnEstab}>
+                <Text>Atras</Text>
+              </TouchableOpacity>
               <Text style={{ fontSize: 16, fontWeight: 'bold' }} allowFontScaling={false}>Tu negocio</Text>
               <Text style={{ fontSize: 40, fontWeight: 'bold' }} allowFontScaling={false}>{infoUser.NombreEstab}</Text>
             </View>

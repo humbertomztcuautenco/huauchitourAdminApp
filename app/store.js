@@ -18,6 +18,13 @@ const rootReducer = combineReducers({
     selectEstab:selectEstabSlice
 })
 
+// Definir la acción para deseleccionar el establecimiento
+const DESELECT_ESTAB = 'DESELECT_ESTAB';
+
+const deselect = () => ({
+  type: DESELECT_ESTAB,
+});
+
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
@@ -54,5 +61,5 @@ const purgePersistedStore = () => {
         });
 };
 
-// purgePersistedStore(); 
+//purgePersistedStore(); 
 // clearAsyncStorage(); 

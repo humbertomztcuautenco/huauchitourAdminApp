@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Scan from "../screens/scan/Scan";
+import ScanNewVersion from '../screens/scan/ScanNewVersion';
 import Screenqr from '../screens/scan/Screenqr';
 import ScreeanListPromos from '../screens/scan/ScreeanListPromos';
 
@@ -12,7 +13,7 @@ const  ScanStack = () => {
   return (
     // <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name= "scan" component={Scan}
+        <Stack.Screen name= "scan" component={ScanNewVersion}
           options={{
             title:"",
             headerStyle:{

@@ -5,7 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 // import Cuenta from "../screens/cuenta/Cuenta";
 import Login from '../screens/start/Login';
 import RecoverPassword from '../screens/start/RecoverPassword';
-import ListEstabs from '../screens/start/ListEstabs';
+//import ListEstabs from '../screens/start/ListEstabs';
 import WriteCode from '../screens/start/WriteCode';
 import ChangePass from '../screens/start/ChangePass';
 
@@ -30,7 +30,7 @@ const StartStack = () => {
             headerShown: false
           }}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="listestabs"
           component={ListEstabs}
           options={{
@@ -44,7 +44,7 @@ const StartStack = () => {
             headerShown: false,
             animation: 'slide_from_right'
           }}
-        />
+        /> */}
         <Stack.Screen
           name="recoverpassword"
           component={RecoverPassword}

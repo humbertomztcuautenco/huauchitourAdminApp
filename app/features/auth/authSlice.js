@@ -109,5 +109,7 @@ const authSlice = createSlice({
     }
 });
 
-export const { update, add, selectEstab } = authSlice.actions;
+
+
+export const { update, add, selectEstab, deselectEstab } = authSlice.actions;
 export default authSlice.reducer;

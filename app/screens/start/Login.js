@@ -100,7 +100,8 @@ export default function Login({ navigation }) {
 
           <Input 
           style={styles.input}
-          placeholder="Correo" 
+          placeholder="Correo"
+          keyboardType="email-address" 
           errorMessage={errors.mail}
           inputContainerStyle={{borderBottomWidth:0}} 
           onChangeText={(value) => guardarValor('user', value)} 
@@ -110,7 +111,7 @@ export default function Login({ navigation }) {
             style={styles.input}
             placeholder="Contraseña"
             inputContainerStyle={{borderBottomWidth:0}}
-            //secureTextEntry={!verPassword}
+            secureTextEntry={!verPassword}
             errorMessage={errors.password}
             onChangeText={(value) => guardarValor('password', value)}
           />

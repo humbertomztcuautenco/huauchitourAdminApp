@@ -38,6 +38,19 @@ export const selectEstablishment = createAsyncThunk(
     }
 );
 
+export const deselectEstablishment = createAsyncThunk(
+    'selectEstab/deselect',
+    async (_, { rejectWithValue }) => {
+        try {
+            await AsyncStorage.removeItem('selectedEstab');
+            return null;
+        } catch (error) {
+            console.error('Error removing establishment data from AsyncStorage:', error);
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 const selectEstabSlice = createSlice({
     name: 'selectEstab',
     initialState,
@@ -60,6 +73,10 @@ const selectEstabSlice = createSlice({
                 console.error('Error removing user data from AsyncStorage:', error);
             });
         },
+        deselectEstab: (state) => {
+            state.selectedEstab = null;
+            AsyncStorage.removeItem('selectedEstab');
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -68,6 +85,12 @@ const selectEstabSlice = createSlice({
             })
             .addCase(selectEstablishment.rejected, (state, action) => {
                 console.error('Error in selectEstablishment:', action.payload);
+            })
+            .addCase(deselectEstablishment.fulfilled, (state) => {
+                state.estabSelect = null;
+            })
+            .addCase(deselectEstablishment.rejected, (state, action) => {
+                state.error = action.payload;
             });
     }
 });
@@ -76,7 +99,7 @@ const selectEstabSlice = createSlice({
 export const getSelectedEstab = (state) => state.selectEstab.selectedEstab;
 
 // Acciones exportadas
-export const { selectEstab, clearEstab } = selectEstabSlice.actions;
+export const { selectEstab, clearEstab, deselectEstab } = selectEstabSlice.actions;
 export default selectEstabSlice.reducer;
 
 // Función para cargar el establecimiento seleccionado desde AsyncStorage

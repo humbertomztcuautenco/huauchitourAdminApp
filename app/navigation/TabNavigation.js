@@ -5,7 +5,7 @@ import {Icon} from 'react-native-elements';
 
 import HomeStack from "./HomeStack";
 import AccountStack from "./AccountStack";
-import ScanStack from './ScanStack';
+import ScanStack from './ScanStack'
 
 const Tab = createBottomTabNavigator();
 
@@ -21,12 +21,7 @@ export default function iNavigation() {
           headerShown: false
         })}
       >
-          <Tab.Screen 
-            name="home" 
-            options={{title:"Home"}} 
-            component={HomeStack}
-            
-          />
+          <Tab.Screen name="home" options={{title:"Home"}} component={HomeStack}/>
           <Tab.Screen name="scan" options={{title:"Scan"}} component={ScanStack}/>
           <Tab.Screen name="account" options={{title:"Cuenta"}} component={AccountStack}/>
       </Tab.Navigator>
