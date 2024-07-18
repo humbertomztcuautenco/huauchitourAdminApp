@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getSelectedEstabFromStorage } from '../../features/selectEstab/selectEstabSlice';
+import { color } from 'react-native-elements/dist/helpers';
 moment.updateLocale('en', {
   months: [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
@@ -104,10 +105,10 @@ const Home = ({ navigation }) => {
     }, [dispatch, token, selectedEstab])
   );
 
-  const selectEstab = (idEstablecimiento, NombreEstab) => {
+  const selectEstab = (idEstablecimiento, NombreEstab, color) => {
     Alert.alert(
       "Seleccionar establecimiento",
-      `¿Estás seguro de seleccionar "${NombreEstab}" como tu establecimiento?`,
+      `¿Estás seguro de seleccionar "${NombreEstab}" como tu establecimiento? con color ${color}`,
       [
         {
           text: "Cancelar",
@@ -116,7 +117,7 @@ const Home = ({ navigation }) => {
         {
           text: "Seleccionar",
           onPress: () => {
-            const estabData = { id: idEstablecimiento, name: NombreEstab };
+            const estabData = { id: idEstablecimiento, name: NombreEstab, color: color };
             dispatch(selectEstablishment({ selectedEstab: estabData }));
             AsyncStorage.setItem('selectedEstab', JSON.stringify(estabData));
           }
@@ -146,6 +147,7 @@ const Home = ({ navigation }) => {
   }
 
   const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
+  
   if (selectedEstab) {
     return (
       !infoUser ? (
@@ -199,7 +201,7 @@ const Home = ({ navigation }) => {
         <View style={styles.body}>
           <View style={styles.searchContainer}>
             <View style={styles.inputSearch}>
-              <TextInput placeholder='Buscar...' placeholderTextColor={'white'}></TextInput>
+              <TextInput placeholder='Buscar...' placeholderTextColor={'white'} style={{width:'90%'}}></TextInput>
               <TouchableOpacity>
                 <FontAwesome style={{ top: 3 }} name='search' size={20} color='white' />
               </TouchableOpacity>
@@ -211,7 +213,7 @@ const Home = ({ navigation }) => {
           <View style={styles.cardContainer}>
             {estabs && estabs.length > 0 ? (
               estabs.map((estab, index) => (
-                <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length] }]} onPress={() => selectEstab(estab.id, estab.nombre)}>
+                <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length] }]} onPress={() => selectEstab(estab.id, estab.nombre, colors[index % colors.length])}>
                   <Image source={require('../../../assets/backLogin.jpg')} style={styles.imgCard} />
                   <Text style={{ fontSize: 25, fontWeight: '700' }}>{estab.nombre}</Text>
                   <View style={styles.iconContainer}>
