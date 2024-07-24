@@ -1,13 +1,23 @@
 import React, { Component } from 'react'
-import { Text, View, StyleSheet, TouchableOpacity, TextInput, Image } from 'react-native'
+import { Text, View, StyleSheet, TouchableOpacity, TextInput, Image, Alert } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux';
 import { color } from 'react-native-elements/dist/helpers';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { useSelector } from 'react-redux';
+import { removeUser } from '../../features/auth/authSlice';
+import { clearEstab } from '../../features/selectEstab/selectEstabSlice';
+import { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import Loader from '../../components/Loader';
+import Api from '../../utils/Api';
+
 
 
 
 
 const AccountNewVersion = () => {
+const dispatch = useDispatch();
+const [infoUser, setInfoUser] = useState(null);
+
 
 const selectedEstablishment = useSelector((state) => state.selectEstab);
 let color = '#90cd2e'
@@ -16,7 +26,53 @@ if(selectedEstablishment.selectedEstab){
   color = selectedEstablishment.selectedEstab.color
 }
 
+useFocusEffect(
+  useCallback(() => {
+      ( async()=>{
+          let fecha = moment().format('yyyy-MM-DD')
+          let textJson = global.atob(token);
+          let infoUser = JSON.parse(textJson);
+          setInfoUser(infoUser.data);
+          let api = new Api(`promotion/count/${selectedEstab.id}/${fecha}`,`GET`,null,token);
+          await api.call()
+          .then(res=>{
+              if (res.response) {
+                  setNumDescuentos(res.result)
+              } else {
+                  res.result == 401 /* && sigout() */;
+              }
+          });
+      })()
+  },[])
+)
+
+const closeSession = () => {
+  Alert.alert(
+      "Cerrar sesion.",
+      "Esta seguro cerrar sesión?",
+      [
+          {
+              text:"Cancelar",
+              style: "cancel"
+          },
+          { 
+              text: "Aceptar", 
+              onPress: () => {
+                  dispatch(removeUser());
+                  dispatch(clearEstab())
+              } 
+          }
+      ],
+      {
+          cancelable:false
+      }
+  )
+}
+
 return (
+  // !infoUser ?(
+  //   <Loader/>
+  // ) : (
   <View style={styles.container}>
     <View style={[styles.backgroundTop, { backgroundColor: color }]}>
       {selectedEstablishment.selectedEstab ? (
@@ -50,7 +106,7 @@ return (
         </View>
 
         <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={[styles.buttonSuccess,{backgroundColor:color}]}>
+            <TouchableOpacity style={[styles.buttonSuccess,{backgroundColor:color}]} onPress={() => closeSession()}>
               <Text style={styles.buttonText}>Cerrar Sesion</Text>
             </TouchableOpacity>
 
@@ -59,23 +115,19 @@ return (
             </TouchableOpacity>
         </View>
 
-        {selectedEstablishment.selectedEstab ? (
+        {/* {selectedEstablishment.selectedEstab ? ( */}
           <TouchableOpacity style={{}}>
-            <Text style={{
-
-
-
-
-            }}>Vender Membresia</Text>              
+            <Text style={{color:'blue', fontSize:19, fontWeight:'bold'}}>Vender Membresia</Text>              
           </TouchableOpacity>
-        ):(
-          <TouchableOpacity style={{}}>
-            <Text style={{color:'gray'}}>Para agregar una membresia debes seleccionar un establecimiento antes</Text>              
+        {/* ):(
+          <TouchableOpacity style={{width:'70%'}}>
+            <Text style={{color:'gray', textAlign:'center'}}>Para agregar una membresia debes seleccionar un establecimiento</Text>              
           </TouchableOpacity>
-        )}
+        )} */}
     </View>    
   </View>
-)
+  )
+// )
 }
 
 const styles = StyleSheet.create({

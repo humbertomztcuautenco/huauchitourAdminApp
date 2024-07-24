@@ -108,7 +108,7 @@ const Home = ({ navigation }) => {
   const selectEstab = (idEstablecimiento, NombreEstab, color) => {
     Alert.alert(
       "Seleccionar establecimiento",
-      `¿Estás seguro de seleccionar "${NombreEstab}" como tu establecimiento? con color ${color}`,
+      `¿Estás seguro de seleccionar "${NombreEstab}" como tu establecimiento?`,
       [
         {
           text: "Cancelar",
