@@ -67,7 +67,9 @@ export default function Login({ navigation }) {
                 estabSelect: null,
               })
             ).then(async () => {
+              //console.log('aqui')
               const storedToken = await AsyncStorage.getItem("token");
+              //navegacion.navigate('selectEstab');
             });
 
           } else {

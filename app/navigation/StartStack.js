@@ -8,6 +8,7 @@ import RecoverPassword from '../screens/start/RecoverPassword';
 //import ListEstabs from '../screens/start/ListEstabs';
 import WriteCode from '../screens/start/WriteCode';
 import ChangePass from '../screens/start/ChangePass';
+import SelectEstab from '../screens/home/SelectEstab'
 
 const Stack = createNativeStackNavigator();
 
@@ -30,9 +31,9 @@ const StartStack = () => {
             headerShown: false
           }}
         />
-        {/* <Stack.Screen
-          name="listestabs"
-          component={ListEstabs}
+        <Stack.Screen
+          name="selectEstab"
+          component={SelectEstab}
           options={{
             title: "",
             headerStyle: {
@@ -44,7 +45,7 @@ const StartStack = () => {
             headerShown: false,
             animation: 'slide_from_right'
           }}
-        /> */}
+        />
         <Stack.Screen
           name="recoverpassword"
           component={RecoverPassword}

@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
 import Home from "../screens/home/Home.js";
+import SelectEstab from '../screens/home/SelectEstab.js';
 
 const Stack = createNativeStackNavigator();
 

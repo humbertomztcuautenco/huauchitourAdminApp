@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { LogBox, View, ActivityIndicator } from 'react-native';
 import TabNavigation from './navigation/TabNavigation';
 import StartStack from './navigation/StartStack';
+import SelectStack from './navigation/SelectStack';
 import { encode, decode } from 'base-64';
 import { retrieveToken } from './features/auth/authSlice';
 
@@ -19,6 +20,6 @@ export default function Index() {
     }, [dispatch]);
 
     return (
-        <>{token != null ? <TabNavigation /> : <StartStack />}</>
+        <>{token != null ? <SelectStack /> : <StartStack />}</>
     );
 }

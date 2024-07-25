@@ -8,7 +8,7 @@ const initialState = {
     estabs: null,
     estabSelect: null,
     isLogin: true,
-    loading: true,  // Estado de carga inicial
+    loading: true,
 };
 
 // Thunks

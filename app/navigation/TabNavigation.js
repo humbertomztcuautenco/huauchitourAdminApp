@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator();
 
 export default function iNavigation() {
   return (
-    <NavigationContainer>
+    //<NavigationContainer>
       <Tab.Navigator 
         initialRouteName="restaurantes"
         screenOptions={({route})=>({
@@ -25,7 +25,7 @@ export default function iNavigation() {
           <Tab.Screen name="scan" options={{title:"Scan"}} component={ScanStack}/>
           <Tab.Screen name="account" options={{title:"Cuenta"}} component={AccountStack}/>
       </Tab.Navigator>
-    </NavigationContainer>
+    //</NavigationContainer>
   );
 }
 

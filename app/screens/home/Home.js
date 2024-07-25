@@ -105,26 +105,6 @@ const Home = ({ navigation }) => {
     }, [dispatch, token, selectedEstab])
   );
 
-  const selectEstab = (idEstablecimiento, NombreEstab, color) => {
-    Alert.alert(
-      "Seleccionar establecimiento",
-      `¿Estás seguro de seleccionar "${NombreEstab}" como tu establecimiento?`,
-      [
-        {
-          text: "Cancelar",
-          style: "cancel"
-        },
-        {
-          text: "Seleccionar",
-          onPress: () => {
-            const estabData = { id: idEstablecimiento, name: NombreEstab, color: color };
-            dispatch(selectEstablishment({ selectedEstab: estabData }));
-            AsyncStorage.setItem('selectedEstab', JSON.stringify(estabData));
-          }
-        }
-      ]
-    );
-  };
 
   const returnEstab = () => {
     Alert.alert(
@@ -188,52 +168,6 @@ const Home = ({ navigation }) => {
       )
     )
   }
-  return (
-    <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-
-        <View style={styles.imgTopContainer}>
-          <ImageBackground source={require('../../../assets/topHome.jpg')} style={styles.imgTop}>
-            <Text style={styles.textImg}>Bienvenido!</Text>
-          </ImageBackground>
-        </View>
-
-        <View style={styles.body}>
-          <View style={styles.searchContainer}>
-            <View style={styles.inputSearch}>
-              <TextInput placeholder='Buscar...' placeholderTextColor={'white'} style={{width:'90%'}}></TextInput>
-              <TouchableOpacity>
-                <FontAwesome style={{ top: 3 }} name='search' size={20} color='white' />
-              </TouchableOpacity>
-            </View>
-
-            <Text style={{ fontSize: 28, fontWeight: '700', marginTop: 10 }}>Selecciona un establecimiento:</Text>
-          </View>
-
-          <View style={styles.cardContainer}>
-            {estabs && estabs.length > 0 ? (
-              estabs.map((estab, index) => (
-                <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length] }]} onPress={() => selectEstab(estab.id, estab.nombre, colors[index % colors.length])}>
-                  <Image source={require('../../../assets/backLogin.jpg')} style={styles.imgCard} />
-                  <Text style={{ fontSize: 25, fontWeight: '700' }}>{estab.nombre}</Text>
-                  <View style={styles.iconContainer}>
-                    <MaterialCommunityIcons name='arrow-collapse-right' size={20} color='black' />
-                  </View>
-                </TouchableOpacity>
-              ))
-            ) : (
-              <View style={styles.noEstablishments}>
-                <Text style={{ textAlign: 'center', marginHorizontal: 40, fontSize: 20 }}>
-                  Aún no tienes asignado ningún establecimiento.
-                </Text>
-              </View>
-            )}
-          </View>
-        </View>
-
-      </ScrollView>
-    </View>
-  )
 }
 
 export default Home
