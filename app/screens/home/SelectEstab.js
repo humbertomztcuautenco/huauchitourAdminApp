@@ -30,7 +30,6 @@ const SelectEstab = ({ navigation }) => {
   const { token, estabs } = useSelector((state) => state.auth);
   const { selectedEstab } = useSelector((state) => state.selectEstab);
   const navegacion = useNavigation();
-  
 
 
   const selectEstab = (idEstablecimiento, NombreEstab, color) => {
@@ -54,46 +53,7 @@ const SelectEstab = ({ navigation }) => {
     );
   };
 
-  useFocusEffect(
-
-    useCallback(() => {
-      if (Platform.OS === 'ios') {
-        StatusBar.setBarStyle('dark-content');
-      }
-
-      (async () => {
-        let fecha = moment().format('YYYY-MM-DD');
-        dispatch(retrieveToken());
-        const storedSelectedEstab = await AsyncStorage.getItem('selectedEstab');
-
-        if (token) {
-          let textJson = global.atob(token);
-          let infoUser = JSON.parse(textJson);
-          infoUser.data.idEstab = selectedEstab.id;
-          infoUser.data.NombreEstab = selectedEstab.name
-
-          setInfoUser(infoUser.data);
-
-          let api = new Api(`promotion/count/${selectedEstab.id}/${fecha}`, `GET`, null, token);
-          await api.call()
-            .then(res => {
-              if (res.response) {
-                let hoy = "Hoy";
-                setInfoPantalla({
-                  fecha: fecha,
-                  hoy: hoy
-                });
-                setNumDescuentos(res.result);
-              } else {
-                res.result === 401
-              }
-            });
-        }
-      })();
-    }, [dispatch, token, selectedEstab])
-  );
-
-
+  
   const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
 
   if(selectedEstab){
@@ -190,12 +150,21 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     height: 150,
     paddingLeft: 20,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    borderRadius: 30,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    elevation: 5,
   },
   cardContainer: {
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     paddingHorizontal: 20,
-    width: '100%'
+    width: '100%',
+    
   },
   inputSearch: {
     width: '80%',
