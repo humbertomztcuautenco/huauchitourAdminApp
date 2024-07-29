@@ -53,7 +53,6 @@ const SelectEstab = ({ navigation }) => {
     );
   };
 
-  
   const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
 
   if(selectedEstab){

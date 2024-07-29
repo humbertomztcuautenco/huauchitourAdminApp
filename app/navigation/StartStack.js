@@ -32,21 +32,6 @@ const StartStack = () => {
           }}
         />
         <Stack.Screen
-          name="selectEstab"
-          component={SelectEstab}
-          options={{
-            title: "",
-            headerStyle: {
-              backgroundColor: '#fff',
-              elevation: 0,
-              shadowOpacity: 0,
-              borderBottomWidth: 0
-            },
-            headerShown: false,
-            animation: 'slide_from_right'
-          }}
-        />
-        <Stack.Screen
           name="recoverpassword"
           component={RecoverPassword}
           options={{

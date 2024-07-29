@@ -85,7 +85,7 @@ return (
         <Image style={styles.imageAccount} source={require('../../../assets/topHome.jpg')}/>
         <Text style={{fontSize:25, fontWeight:'600'}}>Editar Perfil</Text>
 
-        <View style={styles.searchContainer}>
+        <View style={styles.inputContainer}>
             <Text style={styles.textInput}>Correo</Text>
             <View style={[styles.inputSearch,{borderColor:color}]}>
               <TextInput placeholder='Correo' style={{width:'90%'}}></TextInput>
@@ -95,7 +95,7 @@ return (
             </View>
         </View>
 
-        <View style={styles.searchContainer}>
+        <View style={styles.inputContainer}>
             <Text style={styles.textInput}>Telefono</Text>
             <View style={[styles.inputSearch,{borderColor:color}]}>
               <TextInput placeholder='Telefono' style={{width:'90%'}}></TextInput>
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth:1.5
   },
-  searchContainer: {
+  inputContainer: {
     marginVertical: 15
   },
   imageAccount:{

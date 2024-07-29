@@ -20,7 +20,7 @@ export default class Api{
                     method: this.metodo,
                     headers: {
                             'Content-Type': 'application/json',
-                            'APP-TOKEN' : this.token
+                            'Authorization' : `Bearer ${this.token}`
                         }
                 }
             }else{
@@ -29,7 +29,7 @@ export default class Api{
                     body: JSON.stringify(this.parametros), 
                     headers: {
                             'Content-Type': 'application/json',
-                            'APP-TOKEN' : this.token
+                            'Authorization' : `Bearer ${this.token}`
                         }
                 }
             }
