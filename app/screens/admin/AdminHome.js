@@ -1,13 +1,14 @@
-import React, { Component, useState, useEffect } from 'react'
+import React, { Component, useState, useEffect, useCallback } from 'react'
 import { useSelector } from 'react-redux'
 import { Text, View, StyleSheet, TouchableOpacity, Image, ScrollView, Alert } from 'react-native'
 import Api from '../../utils/Api'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Loader from '../../components/Loader';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
 import { selectEstablishment } from '../../features/selectEstab/selectEstabSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import UpdateEstab from './UpdateEstab';
 
 
 
@@ -15,31 +16,37 @@ const AdminHome = ({item}) =>  {
   const [estabs,setEstabs] = useState([])
   const { token } = useSelector((state) => state.auth);
   const { selectedEstab } = useSelector((state) => state.selectEstab);
+  const [loading, setLoading] = useState(false);
+
 
   const navigation = useNavigation()
   const dispatch = useDispatch()
 
-  //console.log(selectedEstab)
-  const consultEstabs = async () =>{
-    try {
-      let api = new Api(`establishment/list`, `GET`, null, token)
-      await api.call()
-      .then(res => {
-        if (res.result) {
-          setEstabs(res.result);
-        } else {
-          res.result === 401
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-    
-  }
 
-  useEffect(() => {
-    consultEstabs();
-  }, []);
+  //console.log('///////////////////////')
+  //console.log(selectedEstab)
+    useFocusEffect(
+      useCallback(() => {
+        const consultEstabs = async () => {
+          try {
+            let api = new Api('establishment/list', 'GET', null, token);
+            const res = await api.call();
+            
+            if (res.result) {
+              setEstabs(res.result);
+              setLoading(true);
+            } else if (res.result === 401) {
+              console.log('server error')
+            }
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+  
+        consultEstabs();
+      }, [token, setEstabs, setLoading])
+    );
+
 
   const selectEstab = (estab, NombreEstab, color) => {
     Alert.alert(
@@ -56,18 +63,18 @@ const AdminHome = ({item}) =>  {
             const estabData = { data:estab, color: color };
             dispatch(selectEstablishment({ selectedEstab: estabData }));
             AsyncStorage.setItem('selectedEstab', JSON.stringify(estabData));
-            navigation.navigate('updateEstab')
           }
         }
       ]
     );
   };
   
-  //console.log(estabs)
+  //console.log(selectedEstab)
   const colors = ['#90CD2E', '#FBE000', '#E7007A', '#4ED4DB', '#08A1F0', '#B800DC'];
 
-    return (
-      !estabs ? (
+  return (
+    !selectedEstab ? (
+      !loading ? (
         <Loader/>
       ):(
     <View style={styles.container}>
@@ -100,7 +107,8 @@ const AdminHome = ({item}) =>  {
       </ScrollView>
     </View>
       )
-    )
+    ):(<UpdateEstab/>)
+  )
 }
 
 export default AdminHome

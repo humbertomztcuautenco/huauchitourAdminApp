@@ -67,12 +67,12 @@ const selectEstabSlice = createSlice({
                 console.error('Error storing user data in AsyncStorage:', error);
             });
         },
-        clearEstab: (state) => {
-            state.selectedEstab = null;
-            AsyncStorage.removeItem('selectedEstab').catch(error => {
-                console.error('Error removing user data from AsyncStorage:', error);
-            });
-        },
+        // clearEstab: (state) => {
+        //     state.selectedEstab = null;
+        //     AsyncStorage.removeItem('selectedEstab').catch(error => {
+        //         console.error('Error removing user data from AsyncStorage:', error);
+        //     });
+        // },
         deselectEstab: (state) => {
             state.selectedEstab = null;
             AsyncStorage.removeItem('selectedEstab');
