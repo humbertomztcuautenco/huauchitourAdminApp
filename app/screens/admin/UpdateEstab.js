@@ -4,7 +4,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Parser } from 'htmlparser2';
 import { deselectEstab } from '../../features/selectEstab/selectEstabSlice';
-import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -38,10 +37,42 @@ const reconstructHTML = (originalHtml, newText) => {
 const UpdateEstab = ({htmlDescription}) => {
 const selectedEstablishment = useSelector((state) => state.selectEstab);
 const color = selectedEstablishment.selectedEstab.color
+const [establishment, setEstablishment] = useState({
+      calificacion: selectedEstablishment.selectedEstab.data.calificacion,
+      centroAutorizado: selectedEstablishment.selectedEstab.data.centroAutorizado,
+      descripcion: selectedEstablishment.selectedEstab.data.descripcion,
+      direccion: selectedEstablishment.selectedEstab.data.direccion,
+      id: selectedEstablishment.selectedEstab.data.id,
+      idPersona: selectedEstablishment.selectedEstab.data.idPersona,
+      info: selectedEstablishment.selectedEstab.data.info,
+      latitud: selectedEstablishment.selectedEstab.data.latitud,
+      longitud: selectedEstablishment.selectedEstab.data.longitud,
+      nombre: selectedEstablishment.selectedEstab.data.nombre,
+      status: selectedEstablishment.selectedEstab.data.status,
+      telefono: selectedEstablishment.selectedEstab.data.telefono,
+      tipo: selectedEstablishment.selectedEstab.data.tipo,
+      urlImg: selectedEstablishment.selectedEstab.data.urlImg,
+      urlImgPerfil: selectedEstablishment.selectedEstab.data.urlImgPerfil
+    
+});
+
+const [rating, setRating] = useState(establishment.calificacion);
 const { width } = useWindowDimensions();
 const [text, setText] = useState(extractTextFromHTML(selectedEstablishment.selectedEstab.data.info));
-const navigation = useNavigation()
 const dispatch = useDispatch()
+
+const handleSave = () => {
+  const newHtml = reconstructHTML(originalHtml, text);
+  setUpdatedHtml(newHtml);
+  console.log('Nuevo HTML:', newHtml);
+};
+
+const updateEstab = (field, value) => {
+  setEstablishment({
+    ...establishment,
+    [field]: value,
+  });
+};
 
 
 const returnEstab = () => {
@@ -64,6 +95,12 @@ const returnEstab = () => {
   );
 }
 
+console.log(establishment)
+
+const handleRating = (newRating) => {
+  setRating(newRating);
+};
+
 return (
 <View style={styles.container}>
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -72,19 +109,77 @@ return (
       </TouchableOpacity>
         <View>
             <Text>Establecimiento no.{selectedEstablishment.selectedEstab.data.id}</Text>
-            <Text>{selectedEstablishment.selectedEstab.data.nombre}</Text>
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Nombre</Text>
+                <View style={[styles.inputSearch,{borderColor:color}]}>
+                  <TextInput placeholder='Nombre del establecimiento' style={{width:'90%'}} value={establishment.nombre} onChangeText={(value) => updateEstab('nombre', value)}></TextInput>
+                  <TouchableOpacity>
+                    <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
+                  </TouchableOpacity>
+                </View>
+            </View>
+
             <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Descripcion</Text>
                 <View style={[styles.inputSearch,{borderColor:color}]}>
-                <TextInput placeholder='Correo' style={{width:'90%'}} multiline onChangeText={setText} numberOfLines={10} value={text}></TextInput>
-                <TouchableOpacity>
+                  <TextInput placeholder='Descripcion' style={{width:'90%'}} value={establishment.descripcion} onChangeText={(value) => updateEstab('descripcion', value)}></TextInput>
+                  <TouchableOpacity>
                     <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
-                </TouchableOpacity>
+                  </TouchableOpacity>
+                </View>
             </View>
-            {/* <RenderHTML contentWidth={width} source={{ html: selectedEstablishment.selectedEstab.data.info }} /> */}
 
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Informacion</Text>
+                <View style={[styles.inputSearch,{borderColor:color}]}>
+                  <TextInput placeholder='Descripcion' style={{width:'90%'}} multiline onChangeText={setText} numberOfLines={10} value={text}></TextInput>
+                  <TouchableOpacity>
+                    <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
+                  </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Telefono</Text>
+                <View style={[styles.inputSearch,{borderColor:color}]}>
+                  <TextInput placeholder='Telefono' style={{width:'90%'}} keyboardType='numeric' value={establishment.telefono} onChangeText={(value) => updateEstab('telefono', value)}></TextInput>
+                  <TouchableOpacity>
+                    <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
+                  </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Direccion</Text>
+                <View style={[styles.inputSearch,{borderColor:color}]}>
+                  <TextInput placeholder='Telefono' style={{width:'90%'}} value={establishment.direccion} onChangeText={(value) => updateEstab('direccion', value)}></TextInput>
+                  <TouchableOpacity>
+                    <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
+                  </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style={styles.rating}>
+              <Text>Calificacion</Text>
+              <View style={styles.stars}>
+                {Array.from({ length: 5 }, (_, index) => (
+                  <TouchableOpacity key={index} onPress={() => handleRating(index + 1)}>
+                    <MaterialIcons
+                      name={index < rating ? 'star' : 'star-border'}
+                      size={30}
+                      color={index < rating ? '#FFD700' : '#CCCCCC'}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+            
+            
         </View>
-        </View>
+
+        <TouchableOpacity onPress={updateEstab}>
+          <Text>Actualizar</Text>
+        </TouchableOpacity>
     </ScrollView>
   </View>
 )
@@ -122,6 +217,12 @@ inputSearch: {
     padding: 10,
     marginTop: 10,
     width: '100%',
+  },
+  rating:{
+    marginVertical:20
+  },
+  stars:{
+    flexDirection:'row'
   }
 })
 
