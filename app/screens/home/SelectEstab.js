@@ -16,15 +16,6 @@ import { useNavigation } from '@react-navigation/native';
 import TabNavigation from '../../navigation/TabNavigation'
 import { useFocusEffect } from '@react-navigation/native';
 
-
-moment.updateLocale('en', {
-  months: [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
-    "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ]
-});
-
-
 const SelectEstab = ({ navigation }) => {
   const dispatch = useDispatch();
   const { token, estabs } = useSelector((state) => state.auth);

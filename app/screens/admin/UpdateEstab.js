@@ -1,9 +1,11 @@
 import React, { Component, useState } from 'react'
-import { Text, View,  StyleSheet, ScrollView, TextInput, TouchableOpacity, useWindowDimensions, Button, Alert } from 'react-native'
+import { Text, View,  StyleSheet, ScrollView, TextInput, TouchableOpacity, useWindowDimensions, Button, Alert, ImageBackground, Image, ActivityIndicator } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Parser } from 'htmlparser2';
 import { deselectEstab } from '../../features/selectEstab/selectEstabSlice';
+import { Picker } from '@react-native-picker/picker';
+
 
 
 
@@ -57,6 +59,7 @@ const [establishment, setEstablishment] = useState({
 });
 
 const [rating, setRating] = useState(establishment.calificacion);
+const [loading, setLoading] = useState(true);
 const { width } = useWindowDimensions();
 const [text, setText] = useState(extractTextFromHTML(selectedEstablishment.selectedEstab.data.info));
 const dispatch = useDispatch()
@@ -104,6 +107,19 @@ const handleRating = (newRating) => {
 return (
 <View style={styles.container}>
     <ScrollView contentContainerStyle={styles.scrollContainer}>
+
+    {loading && (
+        <View style={styles.imgTopContainer}>
+        <ImageBackground source={require('../../../assets/loadImage.jpeg')} style={styles.imgTop}></ImageBackground>
+        <Image style={styles.imageAccount} source={require('../../../assets/loadImage.jpeg')}/>
+      </View>
+      )}
+
+    <View style={styles.imgTopContainer}>
+          <ImageBackground source={{uri: establishment.urlImg}} style={styles.imgTop}></ImageBackground>
+          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={{uri: establishment.urlImgPerfil}}/>
+        </View>
+
       <TouchableOpacity onPress={returnEstab}>
         <Text>atras</Text>
       </TouchableOpacity>
@@ -173,8 +189,30 @@ return (
                 ))}
               </View>
             </View>
-            
-            
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Centro autorizado:</Text>
+                <Picker selectedValue={establishment.centroAutorizado} style={styles.picker} onValueChange={(value) => updateEstab('centroAutorizado', value)}>
+                  <Picker.Item label="Si es un centro autorizado" value="y" />
+                  <Picker.Item label="No es un centro autorizado" value="n" />
+                </Picker>
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Tipo:</Text>
+                <Picker selectedValue={establishment.tipo} style={styles.picker} onValueChange={(value) => updateEstab('tipo', value)}>
+                  <Picker.Item label="Establecimiento" value="establecimiento" />
+                  <Picker.Item label="Experiencia" value="experiencia" />
+                </Picker>
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Tipo:</Text>
+                <Picker selectedValue={establishment.status} style={styles.picker} onValueChange={(value) => updateEstab('status', value)}>
+                  <Picker.Item label="Activo" value="activo" />
+                  <Picker.Item label="Inactivo" value="inactivo" />
+                </Picker>
+            </View>
         </View>
 
         <TouchableOpacity onPress={updateEstab}>
@@ -223,6 +261,26 @@ inputSearch: {
   },
   stars:{
     flexDirection:'row'
+  },
+  imgTop: {
+    width: '100%',
+    height: 250,
+    resizeMode: 'cover',
+    justifyContent: 'flex-end',
+  },
+  imgTopContainer: {
+    width: '100%',
+    justifyContent:'center',
+    alignItems:'center'
+  },
+  imageAccount:{
+    width:150,
+    height:150,
+    borderRadius:100,
+    justifyContent:'center',
+    alignItems:'center',
+    marginTop:-65,
+    marginBottom:10
   }
 })
 

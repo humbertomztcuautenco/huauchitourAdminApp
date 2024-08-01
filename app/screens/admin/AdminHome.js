@@ -88,7 +88,7 @@ const AdminHome = ({item}) =>  {
             {estabs && estabs.length > 0 ? (
               estabs.map((estab, index) => (
                 <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length]}]} onPress={() => selectEstab(estab, estab.nombre, colors[index % colors.length])}>
-                  <Image source={require('../../../assets/backLogin.jpg')} style={styles.imgCard} />
+                  <Image source={{uri: estab.urlImgPerfil}} style={styles.imgCard} />
                   <Text style={{ fontSize: 25, fontWeight: '700' }}>{estab.nombre}</Text>
                   <View style={styles.iconContainer}>
                     <MaterialCommunityIcons name='arrow-collapse-right' size={20} color='black' />

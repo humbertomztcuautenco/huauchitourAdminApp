@@ -94,10 +94,7 @@ export default function Login({ navigation }) {
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.form}>
-          <Image
-            source={require("../../../assets/htlogo.png")}
-            style={styles.imgForm}
-          />
+          <Image source={require("../../../assets/htlogo.png")} style={styles.imgForm}/>
           <Text style={styles.welcomeText}>Bienvenido</Text>
 
           <Input 

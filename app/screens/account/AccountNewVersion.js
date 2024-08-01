@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { color } from 'react-native-elements/dist/helpers';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { removeUser } from '../../features/auth/authSlice';
-import { clearEstab } from '../../features/selectEstab/selectEstabSlice';
+import { deselectEstab } from '../../features/selectEstab/selectEstabSlice';
 import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../components/Loader';
@@ -59,7 +59,7 @@ const closeSession = () => {
               text: "Aceptar", 
               onPress: () => {
                   dispatch(removeUser());
-                  dispatch(clearEstab())
+                  dispatch(deselectEstab())
               } 
           }
       ],

@@ -33,6 +33,8 @@ const Home = ({ navigation }) => {
   const { token, estabs } = useSelector((state) => state.auth);
   const { selectedEstab } = useSelector((state) => state.selectEstab);
 
+  //console.log(selectedEstab)
+
   const buscarPromos = async () => {
     setInfoUser(null);
     setNumDescuentos(null);
