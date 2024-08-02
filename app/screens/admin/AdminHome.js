@@ -48,7 +48,7 @@ const AdminHome = ({item}) =>  {
     );
 
 
-  const selectEstab = (estab, NombreEstab, color) => {
+  const selectEstab = (id, NombreEstab, color) => {
     Alert.alert(
       "Seleccionar establecimiento",
       `¿Estás seguro de seleccionar "${NombreEstab}" como tu establecimiento?`,
@@ -60,7 +60,7 @@ const AdminHome = ({item}) =>  {
         {
           text: "Seleccionar",
           onPress: () => {
-            const estabData = { data:estab, color: color };
+            const estabData = { id: id, color: color };
             dispatch(selectEstablishment({ selectedEstab: estabData }));
             AsyncStorage.setItem('selectedEstab', JSON.stringify(estabData));
           }
@@ -87,7 +87,7 @@ const AdminHome = ({item}) =>  {
         <View style={styles.cardContainer}>
             {estabs && estabs.length > 0 ? (
               estabs.map((estab, index) => (
-                <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length]}]} onPress={() => selectEstab(estab, estab.nombre, colors[index % colors.length])}>
+                <TouchableOpacity key={estab.id} style={[styles.card, { backgroundColor: colors[index % colors.length]}]} onPress={() => selectEstab(estab.id, estab.nombre, colors[index % colors.length])}>
                   <Image source={{uri: estab.urlImgPerfil}} style={styles.imgCard} />
                   <Text style={{ fontSize: 25, fontWeight: '700' }}>{estab.nombre}</Text>
                   <View style={styles.iconContainer}>

@@ -1,11 +1,13 @@
-import React, { Component, useState } from 'react'
-import { Text, View,  StyleSheet, ScrollView, TextInput, TouchableOpacity, useWindowDimensions, Button, Alert, ImageBackground, Image, ActivityIndicator } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { Text, View,  StyleSheet, ScrollView, TextInput, TouchableOpacity, Alert, ImageBackground, Image } from 'react-native'
 import { useSelector, useDispatch } from 'react-redux';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Parser } from 'htmlparser2';
 import { deselectEstab } from '../../features/selectEstab/selectEstabSlice';
 import { Picker } from '@react-native-picker/picker';
-
+import Api from '../../utils/Api';
+import { useFocusEffect } from '@react-navigation/native';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 
 
@@ -22,10 +24,16 @@ const extractTextFromHTML = (html) => {
 };
 
 const reconstructHTML = (originalHtml, newText) => {
+  if (!originalHtml) {
+    console.error('Error: originalHtml is undefined or empty');
+    return '';
+  }
+
   const parts = originalHtml.split(/(<\/?[^>]+>)/g);
   let textIndex = 0;
+
   return parts.map((part) => {
-    if (!part.startsWith('<')) {
+    if (typeof part === 'string' && !part.startsWith('<')) {
       const length = part.length;
       const text = newText.slice(textIndex, textIndex + length);
       textIndex += length;
@@ -36,39 +44,40 @@ const reconstructHTML = (originalHtml, newText) => {
 };
 
 
-const UpdateEstab = ({htmlDescription}) => {
+const UpdateEstab = () => {
 const selectedEstablishment = useSelector((state) => state.selectEstab);
+const { token } = useSelector((state) => state.auth);
 const color = selectedEstablishment.selectedEstab.color
+const [imageUri, setImageUri] = useState(null);
+const [estab, setEstab] = useState({})
 const [establishment, setEstablishment] = useState({
-      calificacion: selectedEstablishment.selectedEstab.data.calificacion,
-      centroAutorizado: selectedEstablishment.selectedEstab.data.centroAutorizado,
-      descripcion: selectedEstablishment.selectedEstab.data.descripcion,
-      direccion: selectedEstablishment.selectedEstab.data.direccion,
-      id: selectedEstablishment.selectedEstab.data.id,
-      idPersona: selectedEstablishment.selectedEstab.data.idPersona,
-      info: selectedEstablishment.selectedEstab.data.info,
-      latitud: selectedEstablishment.selectedEstab.data.latitud,
-      longitud: selectedEstablishment.selectedEstab.data.longitud,
-      nombre: selectedEstablishment.selectedEstab.data.nombre,
-      status: selectedEstablishment.selectedEstab.data.status,
-      telefono: selectedEstablishment.selectedEstab.data.telefono,
-      tipo: selectedEstablishment.selectedEstab.data.tipo,
-      urlImg: selectedEstablishment.selectedEstab.data.urlImg,
-      urlImgPerfil: selectedEstablishment.selectedEstab.data.urlImgPerfil
+      // calificacion: estab.calificacion,
+      // centroAutorizado: estab.centroAutorizado,
+      // descripcion: estab.descripcion,
+      // direccion: estab.direccion,
+      // id: estab.id,
+      // idPersona: estab.idPersona,
+      // info: estab.info,
+      // latitud: estab.latitud,
+      // longitud: estab.longitud,
+      // nombre: estab.nombre,
+      // status: estab.status,
+      // telefono: estab.telefono,
+      // tipo: estab.tipo,
+      // urlImg: estab.urlImg,
+      // urlImgPerfil: estab.urlImgPerfil
     
 });
-
-const [rating, setRating] = useState(establishment.calificacion);
+const [rating, setRating] = useState(0);
 const [loading, setLoading] = useState(true);
-const { width } = useWindowDimensions();
-const [text, setText] = useState(extractTextFromHTML(selectedEstablishment.selectedEstab.data.info));
+const [text, setText] = useState(null);
 const dispatch = useDispatch()
 
 const handleSave = () => {
-  const newHtml = reconstructHTML(originalHtml, text);
-  setUpdatedHtml(newHtml);
+  const newHtml = reconstructHTML(establishment.info || '', text);
   console.log('Nuevo HTML:', newHtml);
 };
+
 
 const updateEstab = (field, value) => {
   setEstablishment({
@@ -98,10 +107,58 @@ const returnEstab = () => {
   );
 }
 
-console.log(establishment)
+useFocusEffect(
+  useCallback(() => {
+    const consultEstab = async () => {
+      try {
+        let api = new Api(`establishment/obtain/${selectedEstablishment.selectedEstab.id}`, 'GET', null, token);
+        const res = await api.call();
+        
+        if (res.result) {
+          setEstablishment(res.result);
+          setText(extractTextFromHTML(res.result.info));
+          //console.log(res.result.info)
+          //setLoading(true);
+        } else if (res.result === 401) {
+          console.log('server error')
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    consultEstab();
+  }, [token, setEstab])
+);
 
 const handleRating = (newRating) => {
   setRating(newRating);
+};
+
+const selectImage = () => {
+  const options = {
+    mediaType: 'photo',
+    includeBase64: false,
+  };
+
+  try {
+    console.log('pepo')
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        const uri = response.assets[0].uri;
+        setImageUri(uri);
+        uploadImage(uri);
+      }
+    });
+  } catch (error) {
+    console.error(error)
+  }
+
+  
 };
 
 return (
@@ -116,15 +173,15 @@ return (
       )}
 
     <View style={styles.imgTopContainer}>
-          <ImageBackground source={{uri: establishment.urlImg}} style={styles.imgTop}></ImageBackground>
-          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={{uri: establishment.urlImgPerfil}}/>
+          <ImageBackground source={{uri: estab.urlImg}} style={styles.imgTop}></ImageBackground>
+          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={{uri: estab.urlImgPerfil}}/>
         </View>
 
       <TouchableOpacity onPress={returnEstab}>
         <Text>atras</Text>
       </TouchableOpacity>
         <View>
-            <Text>Establecimiento no.{selectedEstablishment.selectedEstab.data.id}</Text>
+            <Text>Establecimiento no.{establishment.id}</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Nombre</Text>
                 <View style={[styles.inputSearch,{borderColor:color}]}>
@@ -213,7 +270,16 @@ return (
                   <Picker.Item label="Inactivo" value="inactivo" />
                 </Picker>
             </View>
+
+            <View style={styles.inputContainer}>
+              <TouchableOpacity onPress={selectImage}>
+                <Text>Seleccionar foto</Text>
+              </TouchableOpacity>
+              {imageUri && <Image source={{uri: estab.urlImgPerfil}} style={{ width: 100, height: 100 }} />}
+            </View>
         </View>
+
+        
 
         <TouchableOpacity onPress={updateEstab}>
           <Text>Actualizar</Text>
