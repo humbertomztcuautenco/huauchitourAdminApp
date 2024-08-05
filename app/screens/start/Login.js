@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Platform, Linking, ScrollView, Image, TouchableOpacity, Modal } from "react-native";
 import { Input, Text } from "react-native-elements";
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Api from "../../utils/Api";
@@ -94,26 +95,35 @@ export default function Login({ navigation }) {
       />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.form}>
-          <Image source={require("../../../assets/htlogo.png")} style={styles.imgForm}/>
+          <Image source={require("../../../assets/htlogo.png")} style={styles.imgForm} />
           <Text style={styles.welcomeText}>Bienvenido</Text>
-
-          <Input 
-          style={styles.input}
-          placeholder="Correo"
-          keyboardType="email-address" 
-          errorMessage={errors.mail}
-          inputContainerStyle={{borderBottomWidth:0}} 
-          onChangeText={(value) => guardarValor('user', value)} 
-          />
 
           <Input
             style={styles.input}
-            placeholder="Contraseña"
-            inputContainerStyle={{borderBottomWidth:0}}
-            secureTextEntry={!verPassword}
-            errorMessage={errors.password}
-            onChangeText={(value) => guardarValor('password', value)}
+            placeholder="Correo"
+            keyboardType="email-address"
+            errorMessage={errors.mail}
+            inputContainerStyle={{ borderBottomWidth: 0 }}
+            onChangeText={(value) => guardarValor('user', value)}
           />
+
+          <View style={styles.viewInput} >
+            <Input
+              style={styles.input}
+              placeholder="Contraseña"
+              inputContainerStyle={{ borderBottomWidth: 0 }}
+              secureTextEntry={!verPassword}
+              errorMessage={errors.password}
+              onChangeText={(value) => guardarValor('password', value)}
+            />
+            <Icon
+              name={verPassword ? 'eye' : 'eye-slash'}
+              size={18}
+              onPress={() => setVerPassword(!verPassword)}
+              style={styles.icon}
+            />
+          </View>
+
           <View style={styles.textsContainer}>
             <Text style={styles.text}>Dudas o aclaraciones?</Text>
             <Text style={styles.text}>Contactanos:</Text>
@@ -189,6 +199,20 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 6,
     paddingLeft: 15,
+  },
+  viewInput:{
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    width: "100%",
+  },
+  icon: {
+    padding: 10,
+    color: "black",
+    position: 'absolute',
+    right: 0,
+    bottom: 23,
+    left: '80%',
   },
   textsContainer: {
     justifyContent: 'center',
