@@ -7,9 +7,8 @@ import { deselectEstab } from '../../features/selectEstab/selectEstabSlice';
 import { Picker } from '@react-native-picker/picker';
 import Api from '../../utils/Api';
 import { useFocusEffect } from '@react-navigation/native';
-import { launchImageLibrary } from 'react-native-image-picker';
-
-
+import * as ImagePicker from 'expo-image-picker';
+import OverlayOptions from '../../components/OverlayOptions';
 
 const extractTextFromHTML = (html) => {
   let text = '';
@@ -48,29 +47,14 @@ const UpdateEstab = () => {
 const selectedEstablishment = useSelector((state) => state.selectEstab);
 const { token } = useSelector((state) => state.auth);
 const color = selectedEstablishment.selectedEstab.color
-const [imageUri, setImageUri] = useState(null);
-const [estab, setEstab] = useState({})
-const [establishment, setEstablishment] = useState({
-      // calificacion: estab.calificacion,
-      // centroAutorizado: estab.centroAutorizado,
-      // descripcion: estab.descripcion,
-      // direccion: estab.direccion,
-      // id: estab.id,
-      // idPersona: estab.idPersona,
-      // info: estab.info,
-      // latitud: estab.latitud,
-      // longitud: estab.longitud,
-      // nombre: estab.nombre,
-      // status: estab.status,
-      // telefono: estab.telefono,
-      // tipo: estab.tipo,
-      // urlImg: estab.urlImg,
-      // urlImgPerfil: estab.urlImgPerfil
-    
-});
+const [imageTop, setImageTop] = useState(null);
+const [imagePerfil, setImagePerfil] = useState(null);
+const [establishment, setEstablishment] = useState({});
 const [rating, setRating] = useState(0);
 const [loading, setLoading] = useState(true);
+const [visible, setVisible] = useState(false);
 const [text, setText] = useState(null);
+const [optionType, setOptionType] = useState('')
 const dispatch = useDispatch()
 
 const handleSave = () => {
@@ -85,7 +69,6 @@ const updateEstab = (field, value) => {
     [field]: value,
   });
 };
-
 
 const returnEstab = () => {
   Alert.alert(
@@ -117,8 +100,6 @@ useFocusEffect(
         if (res.result) {
           setEstablishment(res.result);
           setText(extractTextFromHTML(res.result.info));
-          //console.log(res.result.info)
-          //setLoading(true);
         } else if (res.result === 401) {
           console.log('server error')
         }
@@ -128,59 +109,56 @@ useFocusEffect(
     };
 
     consultEstab();
-  }, [token, setEstab])
+  }, [token, setEstablishment])
 );
 
 const handleRating = (newRating) => {
   setRating(newRating);
 };
 
-const selectImage = () => {
-  const options = {
-    mediaType: 'photo',
-    includeBase64: false,
-  };
+const selectImage = async (type) => {
+  const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  try {
-    console.log('pepo')
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else {
-        const uri = response.assets[0].uri;
-        setImageUri(uri);
-        uploadImage(uri);
-      }
-    });
-  } catch (error) {
-    console.error(error)
+  if (permissionResult.granted === false) {
+    alert('Permission to access camera roll is required!');
+    return;
   }
 
-  
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: type === 'portada' ? [16, 9] : [3,3],
+    quality: 1,
+  });
+
+  if (!result.canceled) {
+    type === 'portada' ? setImageTop(result.assets[0].uri) : setImagePerfil(result.assets[0].uri);
+    }
+    setVisible(false)
 };
+
+const openOption = (name) =>{
+  setOptionType(name)
+  setVisible(true)
+}
 
 return (
 <View style={styles.container}>
     <ScrollView contentContainerStyle={styles.scrollContainer}>
 
-    {loading && (
-        <View style={styles.imgTopContainer}>
-        <ImageBackground source={require('../../../assets/loadImage.jpeg')} style={styles.imgTop}></ImageBackground>
-        <Image style={styles.imageAccount} source={require('../../../assets/loadImage.jpeg')}/>
-      </View>
-      )}
-
-    <View style={styles.imgTopContainer}>
-          <ImageBackground source={{uri: estab.urlImg}} style={styles.imgTop}></ImageBackground>
-          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={{uri: estab.urlImgPerfil}}/>
+      <View style={styles.imgTopContainer}>
+        <TouchableOpacity style={{width:'100%'}} onPress={() => openOption('portada')}>
+          <ImageBackground source={loading ? (require('../../../assets/loadImage.jpeg')) : ({uri: imageTop ? imageTop : establishment.urlImg})} style={styles.imgTop} onLoad={() => setLoading(false)}></ImageBackground>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => openOption('perfil')}>
+          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={loading ? (require('../../../assets/loadImage.jpeg')) : ({uri: imagePerfil ? imagePerfil : establishment.urlImgPerfil})}/>
+        </TouchableOpacity>
         </View>
 
       <TouchableOpacity onPress={returnEstab}>
         <Text>atras</Text>
       </TouchableOpacity>
-        <View>
+        <View style={{justifyContent:'center', alignItems:'center'}}>
             <Text>Establecimiento no.{establishment.id}</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Nombre</Text>
@@ -246,7 +224,9 @@ return (
                 ))}
               </View>
             </View>
+            </View>
 
+            <View style={{width:'80%'}}>
             <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Centro autorizado:</Text>
                 <Picker selectedValue={establishment.centroAutorizado} style={styles.picker} onValueChange={(value) => updateEstab('centroAutorizado', value)}>
@@ -270,22 +250,23 @@ return (
                   <Picker.Item label="Inactivo" value="inactivo" />
                 </Picker>
             </View>
-
-            <View style={styles.inputContainer}>
-              <TouchableOpacity onPress={selectImage}>
-                <Text>Seleccionar foto</Text>
-              </TouchableOpacity>
-              {imageUri && <Image source={{uri: estab.urlImgPerfil}} style={{ width: 100, height: 100 }} />}
-            </View>
         </View>
-
-        
 
         <TouchableOpacity onPress={updateEstab}>
           <Text>Actualizar</Text>
         </TouchableOpacity>
     </ScrollView>
+
+    <OverlayOptions
+        visible={visible}
+        onClose={() => setVisible(false)}
+        image={optionType}
+        color={color}
+        ejecute={selectImage}
+      />
   </View>
+
+  
 )
 }
 
@@ -311,7 +292,7 @@ inputSearch: {
     borderWidth:1.5
   },
   inputContainer: {
-    marginVertical: 15
+    marginVertical: 15,
   },
   textArea: {
     height: 150,
@@ -337,7 +318,7 @@ inputSearch: {
   imgTopContainer: {
     width: '100%',
     justifyContent:'center',
-    alignItems:'center'
+    alignItems:'center' 
   },
   imageAccount:{
     width:150,

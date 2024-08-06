@@ -122,7 +122,6 @@ const styles = StyleSheet.create({
     },
     backgroundTop: {
         width: '100%',
-        backgroundColor: color,
         height: 240,
         justifyContent: 'center',
         alignItems: 'center'
