@@ -9,7 +9,7 @@ import { useState, useCallback } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 import Loader from '../../components/Loader';
 import Api from '../../utils/Api';
-
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -17,7 +17,7 @@ import Api from '../../utils/Api';
 const AccountNewVersion = () => {
 const dispatch = useDispatch();
 const [infoUser, setInfoUser] = useState(null);
-
+const navigation = useNavigation();
 
 const selectedEstablishment = useSelector((state) => state.selectEstab);
 let color = '#90cd2e'
@@ -116,8 +116,8 @@ return (
         </View>
 
         {/* {selectedEstablishment.selectedEstab ? ( */}
-          <TouchableOpacity style={{}}>
-            <Text style={{color:'blue', fontSize:19, fontWeight:'bold'}}>Vender Membresia</Text>              
+          <TouchableOpacity style={{}}onPress={() => {navigation.navigate('venderMembresias')}}>
+            <Text style={{color:'blue', fontSize:19, fontWeight:'bold'}}  >Vender Membresia</Text>              
           </TouchableOpacity>
         {/* ):(
           <TouchableOpacity style={{width:'70%'}}>
