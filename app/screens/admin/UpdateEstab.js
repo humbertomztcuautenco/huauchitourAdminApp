@@ -169,10 +169,10 @@ return (
 
       <View style={styles.imgTopContainer}>
         <TouchableOpacity style={{width:'100%'}} onPress={() => openOption('portada')}>
-          <ImageBackground source={loading ? (require('../../../assets/loadImage.jpeg')) : ({uri: imageTop ? imageTop : establishment.urlImg})} style={styles.imgTop} onLoad={() => setLoading(false)}></ImageBackground>
+          <ImageBackground source={establishment.urlImg ? (loading ? (require('../../../assets/loadImage.jpeg')) : ({uri: imageTop ? imageTop : establishment.urlImg})):(require('../../../assets/loadImage.jpeg'))} style={styles.imgTop} onLoad={() => setLoading(false)}></ImageBackground>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => openOption('perfil')}>
-          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={loading ? (require('../../../assets/loadImage.jpeg')) : ({uri: imagePerfil ? imagePerfil : establishment.urlImgPerfil})}/>
+          <Image onLoad={() => setLoading(false)} style={styles.imageAccount} source={establishment.urlImgPerfil ? (loading ? (require('../../../assets/loadImage.jpeg')) : ({uri: imagePerfil ? imagePerfil : establishment.urlImgPerfil})) : (require('../../../assets/loadImage.jpeg'))}/>
         </TouchableOpacity>
         </View>
 
