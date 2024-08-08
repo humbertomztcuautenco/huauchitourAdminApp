@@ -24,27 +24,6 @@ const extractTextFromHTML = (html) => {
   return text;
 };
 
-const reconstructHTML = (originalHtml, newText) => {
-  if (!originalHtml) {
-    console.error('Error: originalHtml is undefined or empty');
-    return '';
-  }
-
-  const parts = originalHtml.split(/(<\/?[^>]+>)/g);
-  let textIndex = 0;
-
-  return parts.map((part) => {
-    if (typeof part === 'string' && !part.startsWith('<')) {
-      const length = part.length;
-      const text = newText.slice(textIndex, textIndex + length);
-      textIndex += length;
-      return text;
-    }
-    return part;
-  }).join('');
-};
-
-
 const UpdateEstab = () => {
 const selectedEstablishment = useSelector((state) => state.selectEstab);
 const { token } = useSelector((state) => state.auth);
@@ -59,12 +38,8 @@ const [text, setText] = useState(null);
 const [optionType, setOptionType] = useState('')
 const dispatch = useDispatch()
 
-//console.log(establishment)
 
 const updateEstab = async (field, value) => {
-
-  // const newHtml = reconstructHTML(establishment.info || '', text);
-  // console.log('Nuevo HTML:', newHtml);
 
   setEstablishment({
     ...establishment,
@@ -73,8 +48,8 @@ const updateEstab = async (field, value) => {
   });
 
   try {
-  let api = new Api(`establishment/update/${selectedEstablishment.selectedEstab.id}`, 'PUT', establishment, token);
-  await api.call();
+    let api = new Api(`establishment/update/${selectedEstablishment.selectedEstab.id}`, 'PUT', establishment, token);
+    await api.call();
   } catch (error) {
     console.error(error)
   }
@@ -160,7 +135,6 @@ const openOption = (name) =>{
   setVisible(true)
 }
 
-//console.log(imageTop)
 
 
 return (
@@ -176,7 +150,7 @@ return (
         </TouchableOpacity>
         </View>
 
-      <TouchableOpacity onPress={returnEstab}>
+      <TouchableOpacity style={[styles.button,{backgroundColor:color}]} onPress={returnEstab}>
         <Text>atras</Text>
       </TouchableOpacity>
         <View style={{justifyContent:'center', alignItems:'center'}}>
