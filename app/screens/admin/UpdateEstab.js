@@ -9,6 +9,8 @@ import Api from '../../utils/Api';
 import { useFocusEffect } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import OverlayOptions from '../../components/OverlayOptions';
+import MapView, { Marker } from 'react-native-maps';
+
 
 const extractTextFromHTML = (html) => {
   let text = '';
@@ -57,17 +59,26 @@ const [text, setText] = useState(null);
 const [optionType, setOptionType] = useState('')
 const dispatch = useDispatch()
 
-const handleSave = () => {
-  const newHtml = reconstructHTML(establishment.info || '', text);
-  console.log('Nuevo HTML:', newHtml);
-};
+//console.log(establishment)
 
+const updateEstab = async (field, value) => {
 
-const updateEstab = (field, value) => {
+  // const newHtml = reconstructHTML(establishment.info || '', text);
+  // console.log('Nuevo HTML:', newHtml);
+
   setEstablishment({
     ...establishment,
     [field]: value,
+    calificacion: rating
   });
+
+  try {
+  let api = new Api(`establishment/update/${selectedEstablishment.selectedEstab.id}`, 'PUT', establishment, token);
+  await api.call();
+  } catch (error) {
+    console.error(error)
+  }
+
 };
 
 const returnEstab = () => {
@@ -99,6 +110,7 @@ useFocusEffect(
         
         if (res.result) {
           setEstablishment(res.result);
+          setRating(res.result.calificacion)
           setText(extractTextFromHTML(res.result.info));
         } else if (res.result === 401) {
           console.log('server error')
@@ -131,16 +143,25 @@ const selectImage = async (type) => {
     quality: 1,
   });
 
+  const formData = new FormData()
+  formData.append('img', result)
+  //no actualiza las imagenes en el back, revisar
   if (!result.canceled) {
     type === 'portada' ? setImageTop(result.assets[0].uri) : setImagePerfil(result.assets[0].uri);
     }
     setVisible(false)
+    let api = new Api(`image/add/${type==='portada' ? 1 : 5}/${selectedEstablishment.selectedEstab.id}`, 'POST', type === 'portada' ? formData.append('img',imageTop ) : formData.append('img',imagePerfil), token);
+    console.log(formData)
+    await api.call();
 };
 
 const openOption = (name) =>{
   setOptionType(name)
   setVisible(true)
 }
+
+//console.log(imageTop)
+
 
 return (
 <View style={styles.container}>
@@ -183,11 +204,13 @@ return (
             <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Informacion</Text>
                 <View style={[styles.inputSearch,{borderColor:color}]}>
-                  <TextInput placeholder='Descripcion' style={{width:'90%'}} multiline onChangeText={setText} numberOfLines={10} value={text}></TextInput>
+                  <TextInput placeholder='Descripcion' editable={false} style={{width:'90%'}} multiline onChangeText={setText} numberOfLines={10} value={text}></TextInput>
                   <TouchableOpacity>
                     <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
                   </TouchableOpacity>
                 </View>
+                <Text style={{color:'gray', marginLeft:10}}>Campo solo disponible en Web*</Text>
+
             </View>
 
             <View style={styles.inputContainer}>
@@ -204,6 +227,16 @@ return (
                 <Text style={styles.textInput}>Direccion</Text>
                 <View style={[styles.inputSearch,{borderColor:color}]}>
                   <TextInput placeholder='Telefono' style={{width:'90%'}} value={establishment.direccion} onChangeText={(value) => updateEstab('direccion', value)}></TextInput>
+                  <TouchableOpacity>
+                    <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
+                  </TouchableOpacity>
+                </View>
+            </View>
+
+            <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Id encargado:</Text>
+                <View style={[styles.inputSearch,{borderColor:color}]}>
+                  <TextInput placeholder='Telefono' style={{width:'90%'}} keyboardType='numeric' value={establishment.idPersona} onChangeText={(value) => updateEstab('idPersona', value)}></TextInput>
                   <TouchableOpacity>
                     <MaterialIcons style={{ top: 3 }} name='edit' size={20} color={color} />
                   </TouchableOpacity>
@@ -250,9 +283,36 @@ return (
                   <Picker.Item label="Inactivo" value="inactivo" />
                 </Picker>
             </View>
+
+            {establishment.latitud && establishment.longitud ? (
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: parseFloat(establishment.latitud),
+                  longitude: parseFloat(establishment.longitud),
+                  latitudeDelta: 0.02,
+                  longitudeDelta: 0.02,
+                }}
+                
+              >
+                <Marker
+                  coordinate={{ latitude: parseFloat(establishment.latitud), longitude: parseFloat(establishment.longitud) }}
+                  title={establishment.nombre}
+                  description={establishment.descripcion}
+                  draggable
+                  onDragEnd={(e) => {
+                    const { latitude, longitude } = e.nativeEvent.coordinate;
+                    updateEstab('latitud', latitude);
+                    updateEstab('longitud', longitude);
+                  }}
+                />
+              </MapView>
+            ) : (
+              <Text>Loading map...</Text>
+            )}
         </View>
 
-        <TouchableOpacity onPress={updateEstab}>
+        <TouchableOpacity style={[styles.button, {backgroundColor:color}]} onPress={updateEstab}>
           <Text>Actualizar</Text>
         </TouchableOpacity>
     </ScrollView>
@@ -328,6 +388,19 @@ inputSearch: {
     alignItems:'center',
     marginTop:-65,
     marginBottom:10
+  },
+  map: {
+    width: '100%',
+    height:300,
+    flex:1
+  },
+  button:{
+    width:'80%',
+    borderRadius:30,
+    padding:20,
+    marginVertical:20,
+    justifyContent:'center',
+    alignItems:'center'
   }
 })
 

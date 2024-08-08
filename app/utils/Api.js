@@ -24,14 +24,26 @@ export default class Api{
                         }
                 }
             }else{
-                init = {
-                    method: this.metodo,
-                    body: JSON.stringify(this.parametros), 
-                    headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization' : `Bearer ${this.token}`
-                        }
+                if(this.parametros instanceof FormData ){
+                    init = {
+                        method: this.metodo,
+                        body: this.parametros, 
+                        headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization' : `Bearer ${this.token}`
+                            }
+                    }
+                }else{
+                    init = {
+                        method: this.metodo,
+                        body: JSON.stringify(this.parametros), 
+                        headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization' : `Bearer ${this.token}`
+                            }
+                    }
                 }
+                
             }
             const r = await fetch(this.url,init)
             .then(res => {

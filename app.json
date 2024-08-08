@@ -23,6 +23,9 @@
       "icon": "./assets/icono.png",
       "infoPlist": {
         "NSCameraUsageDescription": "Huauchi Tour para negocios usa la cámara para poder escanear los códigos QR de tus clientes."
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyDE2RJn1XS5RTfcWxbcF62Fv0TYuoT_h1U"
       }
     },
     "android": {
@@ -40,7 +43,12 @@
         "ACCESS_COARSE_LOCATION",
         "ACCESS_FINE_LOCATION",
         "CAMERA"
-      ]
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDE2RJn1XS5RTfcWxbcF62Fv0TYuoT_h1U"
+        }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
